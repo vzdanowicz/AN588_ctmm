@@ -9,15 +9,15 @@ output:
     toc_float: TRUE
 ---
 
-# 1. Introduction
+1. Introduction
       - Random Walk Models
       - Correlated Random Walk Models
       - Continuous-Time Stochastic Process (CTSP) Models 
 
-# 2. Objectives
+2. Objectives
       - Explain statistical concept briefly
 
-# 3. Coding! With explanations
+3. Coding! With explanations
       - Install Packages
       - Load in Movebank GPS data
       - Remove outliers 
@@ -28,7 +28,31 @@ output:
       - Calculate Autocorrelated Kernel Density Estimates (AKDE) 
       - Calculate Overlap (Gaussian and AKDE) of each individual. 
 
-# 4. Challenges
+4. Challenges
       - Sample problems with Movebank data
 
-# 5. Literature Cited
+5. Literature Cited
+
+```{r - packages}
+library(curl)
+library(ctmm)
+library(rgdal)
+library(rgeos)
+library(raster)
+library(dplyr)
+```
+
+
+```{r - loading in data}
+f <- curl("https://raw.githubusercontent.com/vzdanowicz/AN588_ctmm/main/Site%20fidelity%20in%20cougars%20and%20coyotes%2C%20Utah_Idaho%20USA%20(data%20from%20Mahoney%20et%20al.%202016)-gps.csv")
+data <- read.csv(f, header = TRUE, sep = ",", stringsAsFactors = FALSE)
+head(data)
+```
+
+```{r - ctmm}
+couyotes_ctmm <- as.telemetry(data)
+
+```
+
+
+
