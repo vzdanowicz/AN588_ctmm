@@ -1,0 +1,34 @@
+---
+title: "Continuous-Time Movement Modeling "
+author: "Frank Short, Victoria Zdanowicz, Zoe Albert, & Natalia Kelley"
+date: "12/10/2021"
+output: 
+  html_document:
+    toc: TRUE
+    toc_depth: 3
+    toc_float: TRUE
+---
+
+# 1. Introduction
+      - Random Walk Models
+      - Correlated Random Walk Models
+      - Continuous-Time Stochastic Process (CTSP) Models 
+
+# 2. Objectives
+      - Explain statistical concept briefly
+
+# 3. Coding! With explanations
+      - Install Packages
+      - Load in Movebank GPS data
+      - Remove outliers 
+      - Produce Variograms for Individuals
+          - Assess variograms
+      - Produce guess and fit for individuals:
+          - Compare fit to variogram
+      - Calculate Autocorrelated Kernel Density Estimates (AKDE) 
+      - Calculate Overlap (Gaussian and AKDE) of each individual. 
+
+# 4. Challenges
+      - Sample problems with Movebank data
+
+# 5. Literature Cited
