@@ -1,0 +1,57 @@
+---
+title: "CTMM Module Coyotes + Cougars"
+author: "Frank Short"
+date: "11/22/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Continuous-Time Movement Modeling - Coyotes and Cougars of Idaho
+
+As shown in the background literature, advancements in movement modelling have allowed for more accurate home range estimates that account for both the time dimension and autocorrelation in global position system (GPS) data. Below is an example of the implementation of the R package ctmm (Contnuous-Time Movement Modeling) to calculate the autocorrelated kernel density estimates (AKDE) of cougars (*Puma concolor*) and coyotes (*Canis latrans*) from public available movement data (Mahoney & Young, 2017). The data from this study was collected via Lotek GPS collars (Model GPS3300S; Lotek, Newmarket, ON, Canada) on cougars and coyotes in Utah and Idaho respectively. We will begin by loading in a subset of our data. 
+
+
+
+```{r Loading}
+library(ctmm)
+library(dplyr)
+library(rlist)
+# Loading in data
+
+setwd("C:/Users/fshor/OneDrive/Desktop/Project Design in BioAnthro/Create a Module")
+data=read.csv("Site fidelity in cougars and coyotes, Utah_Idaho USA (data from Mahoney et al. 2016)-gps.csv")
+
+# Creating ctmm telemetry object
+data=as.telemetry(data)
+
+data=data[c(1,4)]
+data=data[-2]
+plot(data[[1]])
+```
+
+Creating a raw plot of our points demonstrates the wide area occupied by this individual coyote. 
+
+## Creating and fitting models
+
+The next step of our workflow is to create variograms from the GPS data for our individuals. Variograms represent autocorrelated data as the semi-variance between positions with varying time-lags. The structure of the variogram presents important information on the movement of an animal, as well as what method of movement modeling is best suited to the data. Arguably the most crucial element of a variogram is if the semi-variance reaches an asymptote. This indicates that an animal is range-resident, which allows our range calculation to be meaningful. Below I will create variograms for each of our individuals.
+
+```{r variogram}
+dt=c(3600,10800,14400)
+control=list(method="pNewton",cores=2)
+proto=ctmm(error=5,circle=FALSE)
+variograms=lapply(1:1,function(i) variogram(data[[i]]))
+plot(variograms[[1]],fraction = 0.5)
+```
+
+Dt represents an optional addition that delineates structural time lags in the data by seconds. Almost all of our coyote data is taken at 4 hour (14400 second) intervals, but other intervals occur. (Add something explaining control=list and the optimizer). Proto allows us to incorporate our estimation of the possible error present in the data, which we have included as 5 meters (I am unsure if this is the actual error for this GPS collar). We then use the ctmm function "variogram" to create a variograms for our individuals 
+```{r model}
+dt=c(3600,10800,14400)
+control=list(method="pNewton",cores=2)
+proto=ctmm(error=5,circle=FALSE)
+variograms=lapply(1:1,function(i) variogram(data[[i]]))
+plot(variograms[[1]],fraction = 0.5)
+```
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
