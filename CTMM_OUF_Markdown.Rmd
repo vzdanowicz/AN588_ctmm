@@ -13,7 +13,7 @@ knitr::opts_chunk$set(echo = TRUE)
 By: Zoe Albert, Natalia Kelley, Frank Short and Victoria Zdanowicz
 
 **Preliminaries**
-Install these packages in R: {ctmm}, {curl}, {rlist}?? etc***
+Install these packages in R: {ctmm}, {curl}, {rlist}, {dplyr}.
 
 **Introduction**
 	
@@ -58,11 +58,9 @@ library(ctmm)
 library(dplyr)
 library(rlist)
 # Loading in data 
-
-#NK: here we should probably use Victoria's data loading from ctmm_outline.Rmd so people can use our code to load the data when working through our module. 
-
-setwd("C:/Users/fshor/OneDrive/Desktop/Project Design in BioAnthro/Create a Module")
-data=read.csv("Site fidelity in cougars and coyotes, Utah_Idaho USA (data from Mahoney et al. 2016)-gps.csv")
+f <- curl("https://raw.githubusercontent.com/vzdanowicz/AN588_ctmm/main/Site%20fidelity%20in%20cougars%20and%20coyotes%2C%20Utah_Idaho%20USA%20(data%20from%20Mahoney%20et%20al.%202016)-gps.csv")
+data <- read.csv(f, header = TRUE, sep = ",", stringsAsFactors = FALSE)
+head(data)
 
 # Creating ctmm telemetry object
 data=as.telemetry(data)
