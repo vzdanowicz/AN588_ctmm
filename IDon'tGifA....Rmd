@@ -1,0 +1,11 @@
+---
+title: "GIF!!!!!!!"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+![Alt Text](https://c.tenor.com/I9ZWYFwud1EAAAAM/white-chicks-white.gif)
+
