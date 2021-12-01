@@ -71,7 +71,9 @@ This is an example of a **random walk model**. Random walk models assume that in
 # Loading in data
 f <- curl("https://raw.githubusercontent.com/vzdanowicz/AN588_ctmm/main/thisisit.csv")
 data <- read.csv(f, header = TRUE, sep = ",", stringsAsFactors = FALSE)
+```
 
+```{r Telemtry}
 # Creating ctmm telemetry object
 data=as.telemetry(data)
 
@@ -106,7 +108,7 @@ fits=lapply(1:2,function(i) ctmm.fit(data[[i]],guess[[i]],control=control))
 summary(fits)
 
 #plotting variogram and fit to see accuracy
-plot(variograms[[2]],CTMM=fits,fraction= 0.5)
+plot(variograms[[2]],CTMM=fits,col.CTMM=c("red","purple","blue"),fraction=0.65,level=0.5)
 ```
 
 Our fitted model accurately represents the data when plotted over the variogram.
