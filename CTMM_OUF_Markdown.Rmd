@@ -58,17 +58,15 @@ Install these packages in R: {ctmm}, {curl}, {rlist}, {dplyr}.
 library(ctmm)
 library(dplyr)
 library(rlist)
+library(curl)
 # Loading in data 
-f <- curl("https://raw.githubusercontent.com/vzdanowicz/AN588_ctmm/main/Site%20fidelity%20in%20cougars%20and%20coyotes%2C%20Utah_Idaho%20USA%20(data%20from%20Mahoney%20et%20al.%202016)-gps.csv")
+f <- curl("https://raw.githubusercontent.com/vzdanowicz/AN588_ctmm/main/thisisit.csv")
 data <- read.csv(f, header = TRUE, sep = ",", stringsAsFactors = FALSE)
-head(data)
 
 # Creating ctmm telemetry object
 data=as.telemetry(data)
 
-data=data[c(1,4)]
-data=data[-2]
-plot(data[[1]])
+data=data[c("IdCoy_P4_2","IdCoy_P1_2")]
 ```
 
   Creating a raw plot of our points demonstrates the wide area occupied by this individual coyote. 	
@@ -81,7 +79,7 @@ plot(data[[1]])
 dt=c(3600,10800,14400)
 control=list(method="pNewton",cores=2)
 proto=ctmm(error=5,circle=FALSE)
-variograms=lapply(1:1,function(i) variogram(data[[i]]))
+variograms=lapply(1:2,function(i) variogram(data[[i]]))
 plot(variograms[[1]],fraction = 0.5)
 ```
 
@@ -94,12 +92,12 @@ plot(variograms[[1]],fraction = 0.5)
     This is especially relevant for improved data sampling methods which are able to combine long sampling periods and high resolution of sampling points. Given our extensive cougar and coyote data, we can expect that our best fit movement model might be the OUF model. We also have to differentiate between the accuracy of isotropic versus anisotropic models for each movement model. By running ctmm.fit and ctmm.select, we can produce data to determine the best fit model. Once we have decided between isotropic and anisotropic, we can proceed to visualize that version of the IID, OU, and OUF models to confirm the results of the initial model guess. 
     
 ```{r model}
-guess=lapply(1:1,function(i) ctmm.guess(data[[i]], CTMM=proto,variogram=variograms[[i]],interactive=FALSE))
-fits<-ctmm.select(data[[1]],guess[[1]],control=control)
+guess=lapply(1:2,function(i) ctmm.guess(data[[i]], CTMM=proto,variogram=variograms[[i]],interactive=FALSE))
+fits=lapply(1:2,function(i) ctmm.fit(data[[i]],guess[[i]],control=control))
 summary(fits)
 
 #plotting variogram and fit to see accuracy
-plot(variograms[[1]],CTMM=fits,fraction= 0.5)
+plot(variograms[[2]],CTMM=fits,fraction= 0.5)
 ```
 
 Our fitted model accurately represents the data when plotted over the variogram. 
@@ -110,13 +108,13 @@ Our fitted model accurately represents the data when plotted over the variogram.
 
 ```{r AKDE}
 #Creating monthly AKDE from fitted model
-uds=lapply(1:1,function(i) akde(data[[1]], fits))
+uds=lapply(1:2,function(i) akde(data[[i]], fits[[i]]))
 
 #Plotting AKDE for CO28 (coyote)
-plot(uds)
+plot(uds[[2]])
 
 #AKDE area for CO28 (coyote)
-summary(uds[[1]])
+summary(uds[[2]])
 
 ```
 
