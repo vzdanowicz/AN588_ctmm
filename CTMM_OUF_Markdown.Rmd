@@ -93,6 +93,9 @@ control=list(method="pNewton",cores=2)
 proto=ctmm(error=5,circle=FALSE)
 variograms=lapply(1:2,function(i) variogram(data[[i]]))
 plot(variograms[[1]],fraction = 0.5)
+
+plot(variograms[[2]],fraction = 0.5)
+
 ```
 
   Dt represents an optional addition that delineates structural time lags in the data by seconds. Almost all of our coyote data is taken at 4 hour (14400 second) intervals, but other intervals occur. (Add something explaining control=list and the optimizer). Proto allows us to incorporate our estimation of the possible error present in the data, which we have included as 5 meters (I am unsure if this is the actual error for this GPS collar). We then use the ctmm function "variogram" to create a variograms for our individuals. As you can see from individual CO28's variogram, we have a good candidate for fitting a model. First, we have a long term dataset lasting from 6/2013 - 6/2014, which gives us a solid understanding of the ranging behavior of this individual. Second, our variogram reaches an asymptote at a semi-variance of about 3 square kilometers indicating range residency.
