@@ -17,10 +17,6 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Preliminaries
 - Install these packages in R: {ctmm}, {curl}, {rlist}, {dplyr}.
-```{r - packages}
-library(ctmm)
-library(curl)
-```
 
 ## Objectives
 
@@ -56,9 +52,11 @@ This, like any GPS monitoring system, is an example of continuous-time stochasti
 
 ---
 
-*Continuous-Time Movement Modeling - Coyotes and Cougars of Idaho*
+*Continuous-Time Movement Modeling - Coyotes*
 
-As shown in the background literature, advancements in movement modelling have allowed for more accurate home range estimates that account for both the time dimension and autocorrelation in global position system (GPS) data. Below is an example of the implementation of the R package ctmm (Contnuous-Time Movement Modeling) to calculate the autocorrelated kernel density estimates (AKDE) of cougars (*Puma concolor*) and coyotes (*Canis latrans*) from public available movement data (Mahoney & Young, 2017). The data from this study was collected via Lotek GPS collars (Model GPS3300S; Lotek, Newmarket, ON, Canada) on cougars and coyotes in Utah and Idaho respectively. We will begin by loading in a subset of our data.
+As shown in the background literature, advancements in movement modelling have allowed for more accurate home range estimates that account for both the time dimension and autocorrelation in global position system (GPS) data. Below is an example of the implementation of the R package ctmm (Contnuous-Time Movement Modeling) to calculate the autocorrelated kernel density estimates (AKDE) of coyotes (*Canis latrans*) from publically available movement data shared on Movebank (Mahoney & Young, 2017). These data were collected via Lotek GPS collars (Model GPS3300S; Lotek, Newmarket, ON, Canada) on 8 coyotes in Idaho from 2004-2015.  **should add hyperlinks in to Movebank repository site and the doi of their paper**
+
+We will begin by loading in a subset of their data. To start, we will only use data from ~ 2 months of the study (January and February 2005) because there are hundreds-of-thousands of data points and no one likes code that takes *days* to run :')
 
 ---
 
@@ -66,36 +64,53 @@ As shown in the background literature, advancements in movement modelling have a
 ### Preparing your data
 
 **Step 1: Load Packages**
-  Recall the packages we downloaded before?  These are going to come into play now.
+  Recall the packages we installed earlier? These are going to come into play now.
+
+```{r - packages}
+library(ctmm)
+library(curl)
+```
+
 
 **Step 2: Load Data**
-  Now, lets load in the movebank GPS data:    
+  Now, lets load in the Movebank GPS data using `curl` and save it to object `bigdata` 
+  
+**include something here about Movebank and that telemetry function is specifically for move/movebank data**  
 
-```{r Loading}
-
-# Loading in data
+```{r - loading}
 f <- curl("https://raw.githubusercontent.com/vzdanowicz/AN588_ctmm/main/thisisit.csv")
-data <- read.csv(f, header = TRUE, sep = ",", stringsAsFactors = FALSE)
+bigdata <- read.csv(f, header = TRUE, sep = ",", stringsAsFactors = FALSE)
+
+# Creating ctmm telemetry object (can be read directly from Movebank)
+coyotes <- as.telemetry(bigdata)
+
+# Changing the names of the coyotes IDs to make our coding easier!
+names(coyotes)<-c('coyA','coyB','coyC','coyD','coyE','coyF','coyG','coyH')
 ```
 
 
-WE SHOULD JUST START WITH RUNNING THE MODEL ON A SINGLE INDIVIDUAL... THEN WE CAN DO OVERLAP
-```{r Telemtry}
-# Creating ctmm telemetry object (can be read directly from movebank)
-coyotes <- as.telemetry(data)
+**Step 3: Explore!**
 
-#pulling out specific inidividual
-coy1 <- coyotes$IdCoy_P4_2
+As with any new data - it is important to visually explore by plotting! 
 
-```
-
-Creating a raw plot of our points demonstrates the wide area occupied by this individual coyote. 	
+coyB and coyC for overlap?
 
 Let's visualize... 
 ```{r explore}
+par(mfrow = c(1, 1))
+plot(coyotes, col = rainbow(length(coyotes)))
+title("All Coyotes")
+
+```
+
+
+We are going to start by first pulling out all of the movement data for 1 coyote, *coyG*, to create the object `coy1`
+```{r - coyp42}
+coy1 <- coyotes$coyG
 plot(coy1)
 ```
-We can see here that this coyote appears to be *range resident* with no obvious migrations. Now we can calculate and plot the coyote's variograms.
+
+We can see from the clustering of GPS points that this coyote appears to be *range resident* with no obvious migrations. Now we can calculate and plot the coyote's variograms.
 
 
 ### Produce Variograms
@@ -104,21 +119,41 @@ The next step of our workflow is to create variograms from the GPS data for our 
 
 ```{r variogram}
 vg.coy1<-variogram(coy1)
+
+#plotting long/short lag variograms
 par(mfrow = c(1, 2))
 plot(vg.coy1)
 plot(vg.coy1,fraction=0.005)
 ```
-*variogram.fit??*
+The asymptote of the variogram for coy1 at longer (day) lags supports our visual analysis that coy1 is **range resident**, while the slight upward curve of the short (hour) lags show evidence of **directional persistence** in the data. 
+
+
+We can then use either `variogram.fit` or `ctmm.guess` to generate our initial parameter guesses/estimates. These variables will later be passed to `ctmm.select` or `ctmm.fit` to better assess the model.
+
+
 
 ```{r v fit}
 variogram.fit(vg.coy1)
 ```
 variogram.fit allows you to adjust parameters to visually assess which are ideal... brings up manipulate gear in top left corner of the *plot* pane. You can select 'save to GUESS' from *manipulate* window in order save these parameters to use in model fitting. Or we can use the ctmm.guess function below!
 
+
 ```{r guess1}
 coy1_GUESS <- ctmm.guess(coy1,variogram = vg.coy1,interactive=FALSE)
 ```
- 
+
+Let's compare the parameters from `variogram.fit` (saved as GUESS from *Manipulate*) and `ctmm.guess`. 
+```{r vg select}
+vg.fitted.mods <- ctmm.select(coy1,CTMM = GUESS,verbose = TRUE) #took 5:30 to run with 4306 obs
+summary(vg.fitted.mods)
+```
+
+```{r guess select}
+guess.fitted.mods <- ctmm.select(coy1,CTMM = coy1_GUESS,verbose = TRUE) #took 6:00 to run with 4306 obs
+summary(guess.fitted.mods)
+```
+
+We see both methods yield the same model fittings. Thus - either are acceptable for initial parameter guessing.
  
 now fit?
 ```{r fit1}
