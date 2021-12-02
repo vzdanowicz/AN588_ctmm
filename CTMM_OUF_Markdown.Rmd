@@ -13,6 +13,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 # **A guy *walks* into a.... ctmm?**
 
+![Alt Text](https://i.giphy.com/media/3o6MbrkU5vJroyqMUw/200w.gif)
 ---
 
 ## Preliminaries
@@ -42,6 +43,8 @@ This is an example of a **random walk model**. Random walk models assume that in
 	**What is a correlated random walk model?**
 
 	Now, imagine it's the morning after your night out and you decide you need to run off the yucky post-drinking feelings.  You lace up your tennis shoes and start running along the charles.
+
+![Alt Text](https://c.tenor.com/vYEKTvwBHooAAAAC/puke-retch.gif)
 
 	This may be an example of a correlated random walk model.  This type of model is directionally **persistent**.  This means that there is a directional bias to travel.  Each step is in relatively the same direction as the last and is relatively uniformly distributed (Codling et al., 2018).  This is a great model to use for animal movement, as animals tend to move in one direction- forward (Codling et al., 2018).
 
