@@ -13,7 +13,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 # **A guy *walks* into a.... ctmm?**
 
-![Alt Text](https://i.giphy.com/media/3o6MbrkU5vJroyqMUw/200w.gif)
+![](https://i.giphy.com/media/3o6MbrkU5vJroyqMUw/200w.gif)
 ---
 
 ## Preliminaries
@@ -34,7 +34,7 @@ library(curl)
 
 ### What is a random walk model?
 
-![Alt Text](https://c.tenor.com/I9ZWYFwud1EAAAAM/white-chicks-white.gif)
+![](https://c.tenor.com/I9ZWYFwud1EAAAAM/white-chicks-white.gif)
 
 You are at the bar, and you just got you and your friends a third round of drinks. You turn around and the dance floor is packed like sardines, and your friends are at the very front next to the DJ booth. How do you get from where you are to where you’re going? Maybe you take a step to the left, two steps forward, another back and to the right. Each step you take is independent from the last, as the dance floor is moving, grooving and no one is staying still. This goes on (and on and on) until you have made your way back to your friends.
 
@@ -44,7 +44,7 @@ This is an example of a **random walk model**. Random walk models assume that in
 
 	Now, imagine it's the morning after your night out and you decide you need to run off the yucky post-drinking feelings.  You lace up your tennis shoes and start running along the charles.
 
-![Alt Text](https://c.tenor.com/vYEKTvwBHooAAAAC/puke-retch.gif)
+![](https://c.tenor.com/vYEKTvwBHooAAAAC/puke-retch.gif)
 
 	This may be an example of a correlated random walk model.  This type of model is directionally **persistent**.  This means that there is a directional bias to travel.  Each step is in relatively the same direction as the last and is relatively uniformly distributed (Codling et al., 2018).  This is a great model to use for animal movement, as animals tend to move in one direction- forward (Codling et al., 2018).
 
@@ -64,7 +64,7 @@ This is an example of a **random walk model**. Random walk models assume that in
 
   As shown in the background literature, advancements in movement modelling have allowed for more accurate home range estimates that account for both the time dimension and autocorrelation in global position system (GPS) data. Below is an example of the implementation of the R package ctmm (Contnuous-Time Movement Modeling) to calculate the autocorrelated kernel density estimates (AKDE) of cougars (*Puma concolor*) and coyotes (*Canis latrans*) from public available movement data (Mahoney & Young, 2017). The data from this study was collected via Lotek GPS collars (Model GPS3300S; Lotek, Newmarket, ON, Canada) on cougars and coyotes in Utah and Idaho respectively. We will begin by loading in a subset of our data.
   
-![Alt Text](https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/a30c089d-87d7-435e-a76b-99588a063bf7/d996mkc-26eebae7-500b-4f8b-8537-d51ea347d34d.gif?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcL2EzMGMwODlkLTg3ZDctNDM1ZS1hNzZiLTk5NTg4YTA2M2JmN1wvZDk5Nm1rYy0yNmVlYmFlNy01MDBiLTRmOGItODUzNy1kNTFlYTM0N2QzNGQuZ2lmIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.XU_TcgBtq1jLBTmiOcqANgp4mFK59ddEXSuUZqYzRcA)
+![](https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/a30c089d-87d7-435e-a76b-99588a063bf7/d996mkc-26eebae7-500b-4f8b-8537-d51ea347d34d.gif?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcL2EzMGMwODlkLTg3ZDctNDM1ZS1hNzZiLTk5NTg4YTA2M2JmN1wvZDk5Nm1rYy0yNmVlYmFlNy01MDBiLTRmOGItODUzNy1kNTFlYTM0N2QzNGQuZ2lmIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.XU_TcgBtq1jLBTmiOcqANgp4mFK59ddEXSuUZqYzRcA)
 
 **Step 1: Load Packages**
   Recall the packages we downloaded before?  These are going to come into play now.
