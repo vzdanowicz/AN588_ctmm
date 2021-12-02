@@ -63,6 +63,8 @@ This is an example of a **random walk model**. Random walk models assume that in
 *Continuous-Time Movement Modeling - Coyotes and Cougars of Idaho*
 
   As shown in the background literature, advancements in movement modelling have allowed for more accurate home range estimates that account for both the time dimension and autocorrelation in global position system (GPS) data. Below is an example of the implementation of the R package ctmm (Contnuous-Time Movement Modeling) to calculate the autocorrelated kernel density estimates (AKDE) of cougars (*Puma concolor*) and coyotes (*Canis latrans*) from public available movement data (Mahoney & Young, 2017). The data from this study was collected via Lotek GPS collars (Model GPS3300S; Lotek, Newmarket, ON, Canada) on cougars and coyotes in Utah and Idaho respectively. We will begin by loading in a subset of our data.
+  
+![Alt Text](https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/a30c089d-87d7-435e-a76b-99588a063bf7/d996mkc-26eebae7-500b-4f8b-8537-d51ea347d34d.gif?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcL2EzMGMwODlkLTg3ZDctNDM1ZS1hNzZiLTk5NTg4YTA2M2JmN1wvZDk5Nm1rYy0yNmVlYmFlNy01MDBiLTRmOGItODUzNy1kNTFlYTM0N2QzNGQuZ2lmIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.XU_TcgBtq1jLBTmiOcqANgp4mFK59ddEXSuUZqYzRcA)
 
 **Step 1: Load Packages**
   Recall the packages we downloaded before?  These are going to come into play now.
