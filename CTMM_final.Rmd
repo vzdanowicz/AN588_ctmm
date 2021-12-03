@@ -1,17 +1,21 @@
 ---
-title: "Continuous-Time Movement Modeling"
+title: "ctmm"
 author: "Zoe Albert, Natalia Kelley, Frank Short & Victoria Zdanowicz"
 output:
   html_document:
     toc: TRUE
-    toc_depth: 3
+    toc_depth: 5
     toc_float: TRUE
+    theme: cosmo
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
 ```
-# Introduction to Animal Movement Modeling 
+
+---
+
+# Introduction to Movement Modeling 
 
 ---
 
@@ -20,125 +24,169 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ### Objectives
 
->The objective of this module is to discuss the application and function of animal movement models, specifically, Contiuous-Time Movement Models (ctmm), and explore measures of overlap.
+>The objective of this module is to discuss the function and application of animal movement models, specifically, Contiuous-Time Movement Models (ctmm), and explore measures of overlap.
 
 ---
 
 
-# A guy *walks* into a.... CTSP?
+## A guy *walks* into a.... CTSP?
+
+<br>
+
+<center>
 
 ![](https://i.giphy.com/media/3o6MbrkU5vJroyqMUw/200w.gif)
 
-## Random Walk Models
+</center>
 
-![](https://c.tenor.com/I9ZWYFwud1EAAAAM/white-chicks-white.gif)
+### Random Walk Models
 
 You are at the bar, and you just got you and your friends a third round of drinks. You turn around and the dance floor is packed like sardines, and your friends are at the very front next to the DJ booth. How do you get from where you are to where you’re going? Maybe you take a step to the left, two steps forward, another back and to the right. Each step you take is independent from the last, as the dance floor is moving, grooving and no one is staying still. This goes on (and on and on) until you have made your way back to your friends.
 
 Some movement ecologists would consider this navigation an example of a **random walk model**. Random walk models assume that in a time period, an individual will take *random* and *independent* steps that are identically distributed in size and away from their previous position (Nau 2014). However, these steps **do** depend on the location of your previous step, with each step the starting point of your next.. that is - unless you've figured out teleportation.
 
-## Correlated Random Walk Models
+<br>
+
+<center>
+
+![](https://c.tenor.com/I9ZWYFwud1EAAAAM/white-chicks-white.gif)
+
+</center>
+
+<br>
+
+### Correlated Random Walk Models
+
+Now, imagine it's the morning after your night out and you decide to run off the yucky post-drinking feelings. After lacing up your tennis shoes, you hit the esplanade and begin running your usual route along the Charles. Your strides are relatively the same direction, uniformly distributed, and full of nauseating regret (Codling et al. 2018).
+
+We can consider this *directionally persistent* example a **correlated random walk model (CRW)**. This means that there is a directional bias to your travel. This is a great model to use for animal movement, as animals tend to move in one direction- forward (Codling et al. 2018).
+
+CRWs were considered the standard for modeling movement data for a long time. However, such models cannot handle *multi-scale autocorrelation* and disproportionately represent sampling schedule rather than underlying meaningful movement processes (Calabrese et al. 216). These shortcomings lead to inconsistent and biased results. Continuous-time stochastic process models (CTSP models) were created as an alternative to CRW models and resolve these issues. 
+
+<br>
+
+<center>
 
 ![](https://c.tenor.com/vYEKTvwBHooAAAAC/puke-retch.gif)
 
-Now, imagine it's the morning after your night out and you decide to run off the yucky post-drinking feelings. After lacing up your tennis shoes, you hit the esplanade and begin running your usual route along the Charles. Your strides are relatively the same direction, uniformly distributed, full of nauseating regret (Codling et al., 2018).
+</center>
 
-We can consider this *directionally persistent* example a **correlated random walk model** (CRW). This means that there is a directional bias to travel. This is a great model to use for animal movement, as animals tend to move in one direction- forward (Codling et al., 2018).
+<br>
 
-The problem with the CRW is that it cannot handle multiscale autocorrelations and focuses disproportionately on sampling schedule rather than what the individual being tracked is really doing. Thse shortcomings lead to inconsistent and biased results. Continuous-time stochastic process models (CTSP models) were created as an alternative to CRW models and resolve these issues. 
-
-
-## Continuous-Time Stochastic Process Models
+### Continuous-Time Stochastic Process Models
 
 Okay. Now, you’ve made it home from your run and you want to see the data on your fitness tracker app.  But, OH NO!  You must have accidentally turned it on last night when you were leaving the bar.  It tracked your uber ride home, when you got out of bed to get a glass of water, when you laid on the bathroom floor for a while, and then the run.  That is a lot of movement data!
 
-This, like any GPS monitoring system, is an example of continuous-time stochastic process modeling. That is, this is a model that accounts for finely sampled and continuous modern data collection (Calabrese et al., 2016).
+This, like any GPS monitoring system, is an example of continuous-time stochastic process modeling. That is, this is a model that accounts for finely sampled and continuous modern data collection (Calabrese et al. 2016).
 
 CRW was so focused on the sampling schedule that it neglected continuous autocorrelated movement. CTSP models, on the other hand, are able to separate these factors while taking both into consideration. CTSP models are able to accommodate a range of data characteristics including irregular sampling schedules and varying levels of autocorrelation. However, CTSP modeling can be statistically complex and lack of comprehensive software to process this kind of data made it relatively inaccessible. 
 
 Fortunately, the continuous-time movement modeling (ctmm) package for R was created. ctmm allows a broad array of movement related data analyses including diagnostic data visualization and model fitting. These parameters can be used to analyze various metrics related to animal movement. In this module, we will examine evidence of range residency, calculate home range size with confidence intervals, and visualize the overlap between the home ranges of two coyotes. 
 
-## Why ctmm?
+### Spatial Autocorrelation
 
-Recently there has been a rapid development and advancement of the technology associated with movement ecology (Calabrese et al., 2016).  The discrete-time correlated random walk, or CRW, had been the standard tool utilized for the statistical analysis of this data. Yet, this methodology is not precise and often confounds the movement process thus producing different results even when the exact same path is being sampled.  This is because CRW reflects the sampling schedule more than it does the actual process of movement (Calabrese et al., 2016).  The package ctmm solved this problem via the use of a continuous-time stochastic process (Calabrese et al., 2016).
+>*'Everything is related to everything else, but near things are more related than distant things' - Waldo R. Tobler* 
 
-### Why Movebank?
+As we have discussed in class previously, statistical analyses often rest on the assumption that data are independent and identically/normally distributed. However, we have also explored how such discrete independence is often not the case (like with our introduction to regression modeling). Investigating **autocorrelation**, the similarity of near observations, can reveal patterns and relationships that can better inform the selection of appropriate statistical analyses.
 
-Movebank is a free online tool that allows individuals to store and archive animal movement data to be used by other scientists and lay people alike (Mrozewski, 2018).  This website is an especially useful tool for cross species comparisons, as well as comparisons over time, and climate/ ecological change (Kranstauber et al., 2011).  You can explore the website for yourself here: [text](https://www.movebank.org/cms/movebank-main) 
+Spatial data have a strong tendency to be *dependent*, meaning near values are more/less similar than expected compared to randomly associated pairs of observations. When dealing with spatial data, like the animal movement data we are exploring here, **spatial autocorrelation** is a critical concept that drives model fitting and analysis. 
+
+We will continue to explore this concept in greater detail as we dive deeper into the components of `ctmm` modeling which help ensure our spatial models are statistically meaningful.
+
+### `ctmm` & Movebank
+
+Recently there has been a rapid development and advancement of the technology associated with movement ecology (Calabrese et al. 2016).  The discrete-time correlated random walk, or CRW, had been the standard tool utilized for the statistical analysis of this data. Yet, this methodology is not precise and often confounds the movement process thus producing different results even when the exact same path is being sampled.  This is because CRW reflects the sampling schedule more than it does the actual process of movement (Calabrese et al. 2016).  The package ctmm solved this problem via the use of a continuous-time stochastic process (Calabrese et al. 2016).
+
+*Movebank* is a free online tool that allows individuals to store and archive animal movement data to be used by other scientists and lay people alike (Mrozewski 2018). This website is an especially useful tool for cross species comparisons, as well as comparisons over time, and climate/ecological change (Kranstauber et al. 2011).  You can explore the website and various publicly available datasets for yourself [here](https://www.movebank.org/cms/movebank-main)!
 
 ### Conservation Implications
 
-Understanding animal movement is crucial when studying population ecology, disease spread, the flow of genetic material, and conservation among other things (Calabrese et al., 2016).  In so far as conservation goes, this kind of data allows us to understand how animals are using their environments, and what can be considered their home ranges.  With this information, we can designate certain areas as protected, create corridors and encourage reforestation of degraded areas. 
+Understanding animal movement is crucial when studying population ecology, disease spread, the flow of genetic material, and conservation among other things (Calabrese et al., 2016). In so far as conservation goes, this kind of data allows us to understand how animals are using their environments, and what can be considered their home ranges. With this information, we can designate certain areas as protected, create corridors and encourage reforestation of degraded areas. 
+
+<br>
 
 
 ---
 
-# Movement Data Analysis
+## Movement Data Analysis
 
 ---
 
 As shown in the background literature, advancements in movement modelling have allowed for more accurate home range estimates that account for both the time dimension and autocorrelation in global position system (GPS) data. Below is an example of the implementation of the R package `{ctmm}` (Contnuous-Time Movement Modeling) to calculate the autocorrelated kernel density estimates (AKDE) of coyotes (*Canis latrans*) from publicly available movement data shared on Movebank (Mahoney & Young, 2017). These data were collected via Lotek GPS collars (Model GPS3300S; Lotek, Newmarket, ON, Canada) on 8 coyotes in Idaho between 2004-2015.  If you would like to also play around with this massive data set, take a look at the data repository on [Movebank](https://www.datarepository.movebank.org/handle/10255/move.588). 
 
-We will begin by loading in a subset of their data. To start, we will only use data from ~ 1 months of the study (January 2005) because there are hundreds-of-thousands of data points and no one likes code that takes *days* to run :')
 
 ---
 
 
-## EXAMPLE
+### Data Configuration
 
-**Step 1: Load Packages**
-Recall the packages we installed earlier? These are going to come into play now.
+We will begin by loading in a subset of the *Mahoney & Young 2017* data. For the purpose of this module, we are only using data from ~ 1 month of the study (January 2005). The GPS collars used in the study recorded data every five minutes for *over ten years* and no one likes code that takes *days* to run :')
 
-```{r - packages}
+Let's first load our packages and then use `{curl}` to save the Movebank GPS data into the new object `bigdata`
+```{r - loading}
 library(ctmm)
 library(curl)
-```
-
-
-**Step 2: Load Data**
-Now, lets load in the Movebank GPS data using `{curl}` and save it to object `bigdata` 
-
-ctmm is designed to go hand in hand with Movebank which is an open access source for GPS animal tracking data. For ctmm to function, data must be in Movebank format and coerced into a telemetry object. Telemetry objects in ctmm contain information about the movement being analyzed including GPS location and sampling schedule. Objects from the {move} package in R can also be utilized in ctmm by using the as.telemetry function. Once the object is in ctmm format, it can be manipulated and visualized to aid in general characterization of the data. 
-
-```{r - loading}
 f <- curl("https://raw.githubusercontent.com/vzdanowicz/AN588_ctmm/main/thisisit.csv")
 bigdata <- read.csv(f, header = TRUE, sep = ",", stringsAsFactors = FALSE)
+```
 
-# Creating ctmm telemetry object (can be read directly from Movebank)
+<br>
+
+The `{ctmm}` package was designed explicitly to go hand in hand with *Movebank*. For any `ctmm` function to operate, data must be in Movebank format and coerced into a **telemetry** object. 
+
+**Telemetry** objects in `{ctmm}` contain information about the movement being analyzed including GPS location and sampling schedule. Objects from the `{move}` package in R can also be utilized in `ctmm` by using the `as.telemetry` function. Once in the proper format, movement data can be manipulated and visualized for data characterization and analysis. 
+
+```{r as telemetry}
 coyotes <- as.telemetry(bigdata)
 
 # Changing the names of the coyote IDs to make coding easier!
 names(coyotes)<-c('coyA','coyB','coyC','coyD','coyE','coyF','coyG','coyH')
 ```
+<br>
 
+### Data Visualization
 
-**Step 3: Explore!**
+As with any new data - it is important to explore! 
 
-As with any new data - it is important to visually explore by plotting! 
+Plotting and visualizing raw movement tracks is a great way to assess your data as a whole. In initial visualization you can detect obvious migratory behaviors, directional patterns, or perhaps even erroneous data points that require attention. This step can also aid in data selection for modeling.
 
-Let's visualize... 
+**Let's visualize... **
 ```{r explore}
 par(mfrow = c(1, 1))
 plot(coyotes, col = rainbow(length(coyotes)))
 title("All Coyotes")
 ```
+<br>
+From this plot, we can see pretty distinct ranges for the 8 individuals and there do not appear to be any unnatural patterns or random points that could skew future analysis. 
 
+<br>
 
-We are going to start by first pulling out all of the movement data for 1 coyote, *coyG*, to create the object `coy1`
+Though you can use `ctmm` models to analyze cumulative data from an entire population, for the sake of time, we are going to build our model using the data for a single coyote, *coyG*. 
+
+Let's begin by pulling out all of the movement data for this individual to create and then plot the object `coy1`
 ```{r - coyp42}
 coy1 <- coyotes$coyG
 plot(coy1)
 ```
+<br>
 
-We can see from the clustering of GPS points that this coyote appears to be *range resident* with no obvious migrations. The next step of our workflow is to calculate and plot variograms from the GPS data for this individual.
+We can see from the fairly tight clustering of GPS points, that this coyote appears to be **range resident** with no obvious migrations. The next step of our workflow is to calculate and plot **variograms** from the GPS data for this individual.
 
+<br>
+
+---
 
 ## Variograms
 
-Variograms represent autocorrelated data as the semi-variance between positions with varying time-lags. The structure of the variogram presents important information on the movement of an animal, as well as what method of movement modeling is best suited to the data. Arguably, the most crucial element of a variogram is if the semi-variance reaches an asymptote. This indicates that an animal is range-resident, which allows our range calculation to be meaningful. 
+---
 
-Let's use the code below to calculate and plot the variograms for `coy1`.
+**Variograms** are plots of the semi-variance between positions with varying time-lags, providing an unbiased way to visualize the autocorrelation of our data. The structure of the variogram provides critical information on the movement of an animal, as well as what method of modeling will fit the data best. 
 
+Arguably, the most crucial element of a variogram is if the semi-variance reaches an **asymptote.** This indicates that an animal is **range-resident**, which allows our range calculation to be meaningful. 
+
+The code below employs the function `variogram()` to calculate and then plot the variogram of telemetry object, `coy1`. 
+
+<br>
 ```{r variogram}
 vg.coy1<-variogram(coy1)
 
@@ -149,12 +197,46 @@ title("Long Lag")
 plot(vg.coy1,fraction=0.005)
 title("Short Lag")
 ```
+<br>
 
 The asymptote of the variogram for `coy1` at longer (day) lags supports our visual analysis that `coy1` is **range-resident**, while the slight upward curve of the short (minutes) lags show evidence of **directional persistence** in the data. 
+
+Variograms are used to determine the initial parameter *guesstimates* which are then utilized in **maximum likelihood estimation**, which we will describe in more detail later on. 
+
+
+<br>
+
+---
+
+**CHALLENGE 1**
+
+---
+
+Follow the steps outlined above to calculate and plot the variograms for a different individual, `coyH`.
+
+- What do the variograms for this coyote suggest?
+- How can we interpret the overall picture of the first variogram?
+- What does a more zoomed in variogram show us?
+
+
+```{r coy 2}
+coy2 <- coyotes$coyH
+plot(coy2)
+```
+
+```{r variogram2}
+vg.coy2<-variogram(coy2)
+par(mfrow = c(1, 2))
+plot(vg.coy2)
+plot(vg.coy2,fraction=0.005)
+```
+
 
 ---
 
 ## Initial Parameter Estimates
+
+---
 
 We can then use either `variogram.fit()` or `ctmm.guess()` to generate our initial parameter guesses/estimates. These variables will later be passed to `ctmm.select` or `ctmm.fit` to better assess the model.
 
@@ -166,14 +248,20 @@ If run in your console, `variogram.fit()` allows you to visually assess and adju
 variogram.fit(vg.coy1)
 GUESS<-variogram.fit(vg.coy1)
 ```
+<br>
+
 We can also use `ctmm.guess()` and the variogram for `coy1`, `vg.coy1`, to estimate initial model parameters.
 
-
+<br>
 ```{r guess1}
 coy1_GUESS <- ctmm.guess(coy1,variogram = vg.coy1,interactive=FALSE)
 ```
+<br>
 
 These parameters, `GUESS` and `coy1_GUESS`, are critical in our ability to assess the most suitable model type for the data at hand. We will next explore how `ctmm.select` and `ctmm.fit` allow us to test and visualize potential model types.
+
+<br>
+<br>
 
 ---
 
@@ -188,35 +276,51 @@ The independent identically distributed (IID) process assumes each data point is
 
 This is especially relevant for improved data sampling methods which are able to combine long sampling periods and high resolution of sampling points. Given the extensive dataset used here, we can expect that our best fit movement model might be the OUF model. We also have to differentiate between the accuracy of *isotropic* versus *anisotropic* models for each movement model. By running `ctmm.fit` and `ctmm.select`, we can produce data to determine the best fit model. Once we have decided between isotropic and anisotropic, we can proceed to visualize those model types to confirm the results of the initial model guess.
 
+<br>
 
-Let's compare the parameters from `variogram.fit` and `ctmm.guess`.
+### Comparing `variogram.fit` & `ctmm.guess`
+
+<br>
+
+Let's input the initial parameter estimates calculated from `variogram.fit` (`GUESS`) and `ctmm.guess` (`coy1_GUESS`) to compare the two methods.
 ```{r vg select}
 vg.fitted.mods <- ctmm.select(coy1,CTMM = GUESS,verbose = TRUE) #can take 5+ mins to run 
-summary(vg.fitted.mods)
+guess.fitted.mods <- ctmm.select(coy1,CTMM = coy1_GUESS,verbose = TRUE) #can take 5+ mins to run
 ```
 
 ```{r guess select}
-guess.fitted.mods <- ctmm.select(coy1,CTMM = coy1_GUESS,verbose = TRUE) #can take 5+ mins to run
+summary(vg.fitted.mods)
 summary(guess.fitted.mods)
 ```
 
 Both methods yield the same model fittings. Thus - either are acceptable for initial parameter guessing. 
 
-We can see from the summary above, that the *anisotropic* version of OUF is the ideal model. We can also see that the anisotropic versions of each model were favored over their isotropic counterpart (we are looking for lowest AIC values). We can now visually examine the fits of the anisotropic versions of OU and OUF models.
+We can see from the summaries above that the *anisotropic* version of OUF is the ideal model for our data. We can also see that the anisotropic versions of each model were favored over their isotropic counterpart (we are looking for lowest AIC values). We can now visually examine the fits of the anisotropic versions of OU and OUF models.
 
+<br>
+
+### Assessing Model Types
+
+<br>
+
+To do this, we must first extract out of the fitted anisotropic versions of the OU and OUF models 
+
+>NOTE: as shown above, `vg.fitted.mods` could also be used to pull out the model types
 
 ```{r extract}
-#Extract the fitted anisotropic versions of IID,OU,and OUF.
 OU<-guess.fitted.mods[[4]]
 OUF<-guess.fitted.mods[[1]]
 ```
+<br>
 
-ctmm.fit accepts a ctmm object as well as the guesses generated by variogram.fit (in our case, OU and OUF) and generates values for comparing the fit of each model, including point estimates, confidence intervals, and AICc. Based on this output, the user can select the most appropriate model for their data. We explain some of these parameters in more detail in the following paragraphs. 
+`ctmm.fit` accepts a `ctmm` object as well as the guesses generated by `variogram.fit`/`ctmm.guess` (in our case, OU and OUF) and generates values for comparing the fit of each model. These values include: point estimates, confidence intervals, and AICc. Based on this output, the user can select the most appropriate model for their data. We explain some of these parameters as we go along. 
 
-*takes ~2mins to run the fits below*
 ```{r max like hard way}
-M.OU <- ctmm.fit(coy1,OU)
+M.OU <- ctmm.fit(coy1,OU) #these fits may take ~2 mins
 M.OUF <- ctmm.fit(coy1,OUF)
+```
+
+```{r max like fits}
 FITS <- list(OU=M.OU,OUF=M.OUF)
 summary(FITS)
 ```
@@ -254,7 +358,7 @@ We can see the OU (pink) and OUF (purple) models plotted here against the variog
 
 ---
 
-# Model Fitting
+## Model Fitting
 
 ---
 
@@ -268,26 +372,9 @@ summary(coy1_FIT)
 >NOTE: `CTMM = OUF` based on our previous figures/calculations which show that is the best fit model compared to the OU model. Additionally, the argument `trace = TRUE` provides a progress report in the console window as `ctmm.fit` runs. 
 
 
----
-
-## **CHALLENGE 1**
-
----
-
-```{r coy 2}
-coy2 <- coyotes$coyH
-plot(coy2)
-```
-
-```{r variogram2}
-vg.coy2<-variogram(coy2)
-par(mfrow = c(1, 2))
-plot(vg.coy2)
-plot(vg.coy2,fraction=0.005)
-```
 
 
-What do the variograms for this coyote suggest? What might the overall picture of the first variogram mean? How about the second variogram which is zoomed in?
+CHALLENGE 2?
 
 ```{r v fit2}
 variogram.fit(vg.coy2)
@@ -329,7 +416,7 @@ title("OUF")
 Which method fits the model best as suggested by the AICc? What do our plots show us about whether OU or OUF best fits the movement data?
 ---
 
-## **CHALLENGE 2**
+## CHALLENGE 2
 
 ---
 
@@ -342,7 +429,7 @@ summary(coy2_FIT)
 
 ---
 
-# Autocorrelated Kernel Density Estimates
+## Autocorrelated Kernel Density
 
 ---
 
@@ -354,20 +441,31 @@ Recall the methods we went over in [Module 19 - Introduction to GIS and Spatial 
 
 More specifically, kernel density estimation works by using the movement data to create small kernels, which are a weighted function in non-parametric statistics that define the distribution of similar points around a given point *x*, with *k(x,y)* representing the similarity of point **x** given another point **y**. This bandwidth, or covariance, is denoted as **σB**. The average of these kernels are then used to estimate **p̂** of the probability density function (PDF) **p**. KDE are best calculated with the optimal bandwidth, as this reduces the mean integrated square error (MISE) between **p** and **p̂**. Fleming et al. (2015) estimate MISE in order to acheive optimal bandwidth as follows:
 
+<center>
+
 ![](https://esajournals.onlinelibrary.wiley.com/cms/asset/7b63b15d-2deb-4e71-908a-9116fa2b4f48/ecy20159651182-math-0001.gif)
+
+</center>
 
 Here, **σ0** represents the covariance of locations and **σB**, as discussed, represents the bandwidth. 
 
 ### Autocorrelated Kernel Density
 
-For uncorrelated data, this method works best at estimating the MISE, but further changes must be made to better estimate error with autocorrelated data. To do this, Fleming et al.'s (2015) new estimator uses the same steps but relaxes the assumption of independently and indentically distributed data (IID). Here, the minimum occurs at the optimal bandwith. This new estimator for MISE is defined as follows:
+For uncorrelated data, this method works best at estimating the MISE, but further changes must be made to better estimate error with autocorrelated data. To do this, Fleming et al.'s (2015) new estimator uses the same steps but relaxes the assumption of independently and identically distributed data (IID). Here, the minimum occurs at the optimal bandwidth. This new estimator for MISE is defined as follows:
+
+<center>
 
 ![](https://esajournals.onlinelibrary.wiley.com/cms/asset/8438a5bd-2583-4d93-bd1a-69609702fa11/ecy20159651182-math-0002.gif)
 
+</center>
+
 Here **γ(τ)** is the semi-variance function (SVF), and **n(τ)** is the number of location pairs with time lag **t** between them. This function achieves optimal performance as autocorrelation increases, but operates efficiently for uncorrelated data as well by converging with the previously discussed function. Now we can see why we put so much work into analyzing autocorrelation via variograms! All of our previous model fitting is used to calculate the AKDE here, which incorporates autocorrelation to calculate a much more accurate kernel density estimation that reduces much of the problematic biases otherwise present. 
 
-# Autocorrelated Density Estimates, Overlap, and Conditional Distribution of Encounters for Coyotes 
+---
 
+## AKDE, Overlap, & CDE for Coyotes 
+
+---
 
 ```{r overlap prep}
 both.coyotes <- coyotes[c("coyG","coyH")]
