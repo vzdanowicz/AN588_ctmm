@@ -422,6 +422,8 @@ plot(both.coyotes, UD = UDS_coyotes, col=rainbow(length(both.coyotes)))
 
 ```
 
+Coyote P4_2 (in red) and coyote P5_2 (in blue) are tracked coyotes in different packs (4 and 5). We can see how these two packs separate themselves by the little overlap and clear separation of their space usage. 
+
 We can also estimate the CDE (conditional distribution of encounters) (Noonan et al., 2020). CDE is a concept describing the long-term encounter location probabilities for movement within home ranges.
 
 ```{r CDE}
