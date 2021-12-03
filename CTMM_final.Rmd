@@ -28,33 +28,34 @@ knitr::opts_chunk$set(echo = TRUE)
 # A guy *walks* into a.... CTSP?
 
 
-### Random Walk Models
+## Random Walk Models
 
 You are at the bar, and you just got you and your friends a third round of drinks. You turn around and the dance floor is packed like sardines, and your friends are at the very front next to the DJ booth. How do you get from where you are to where you’re going? Maybe you take a step to the left, two steps forward, another back and to the right. Each step you take is independent from the last, as the dance floor is moving, grooving and no one is staying still. This goes on (and on and on) until you have made your way back to your friends.
 
 Some movement ecologists would consider this navigation an example of a **random walk model**. Random walk models assume that in a time period, an individual will take *random* and *independent* steps that are identically distributed in size and away from their previous position (Nau 2014). However, these steps **do** depend on the location of your previous step, with each step the starting point of your next.. that is - unless you've figured out teleportation.
 
-### Correlated Random Walk Models
+## Correlated Random Walk Models
 
 Now, imagine it's the morning after your night out and you decide to run off the yucky post-drinking feelings. After lacing up your tennis shoes, you hit the esplanade and begin running your usual route along the Charles. Your strides are relatively the same direction, uniformly distributed, full of nauseating regret (Codling et al., 2018).
 
 We can consider this *directionally persistent* example a **correlated random walk model**. This means that there is a directional bias to travel. This is a great model to use for animal movement, as animals tend to move in one direction- forward (Codling et al., 2018).
 
-### Continuous-Time Stochastic Process Models
+*NEED TO DESCRIBE CRW IN MORE DETAIL TO LEAD INTO BENEFIT OF CTSP*
+
+
+## Continuous-Time Stochastic Process Models
 
 Okay. Now, you’ve made it home from your run and you want to see the data on your fitness tracker app.  But, OH NO!  You must have accidentally turned it on last night when you were leaving the bar.  It tracked your uber ride home, when you got out of bed to get a glass of water, when you laid on the bathroom floor for a while, and then the run.  That is a lot of movement data!
 
 This, like any GPS monitoring system, is an example of continuous-time stochastic process modeling. That is, this is a model that accounts for finely sampled and continuous modern data collection (Calabrese et al., 2016).
 
-*NEED TO DESCRIBE CRW IN MORE DETAIL TO LEAD INTO BENEFIT OF CTSP AND ADVANCEMENTS IN DATA PROCESSESSING OF CTSP AND IMPORTANCE OF CTMM TO INTEGRATE CTSP WITH STATS FOR AUTOCORRELATED DATA*
+*INTRODUCE CTSP AND CTMM.. ADVANCEMENTS IN DATA PROCESSESSING OF CTSP AND IMPORTANCE OF CTMM TO INTEGRATE CTSP WITH STATS FOR AUTOCORRELATED DATA.. RELATIONSHIP BETWEEN CTMM AND MOVEBANK*
 
 ---
 
-## Let's code!
+# Movement Data Analysis
 
 ---
-
-*Continuous-Time Movement Modeling - Coyotes*
 
 As shown in the background literature, advancements in movement modelling have allowed for more accurate home range estimates that account for both the time dimension and autocorrelation in global position system (GPS) data. Below is an example of the implementation of the R package `{ctmm}` (Contnuous-Time Movement Modeling) to calculate the autocorrelated kernel density estimates (AKDE) of coyotes (*Canis latrans*) from publicly available movement data shared on Movebank (Mahoney & Young, 2017). These data were collected via Lotek GPS collars (Model GPS3300S; Lotek, Newmarket, ON, Canada) on 8 coyotes in Idaho between 2004-2015.  **should add hyperlinks in to Movebank repository site and the doi of their paper**
 
@@ -63,10 +64,10 @@ We will begin by loading in a subset of their data. To start, we will only use d
 ---
 
 
-### Preparing your data
+## EXAMPLE
 
 **Step 1: Load Packages**
-  Recall the packages we installed earlier? These are going to come into play now.
+Recall the packages we installed earlier? These are going to come into play now.
 
 ```{r - packages}
 library(ctmm)
@@ -75,7 +76,7 @@ library(curl)
 
 
 **Step 2: Load Data**
-  Now, lets load in the Movebank GPS data using `{curl}` and save it to object `bigdata` 
+Now, lets load in the Movebank GPS data using `{curl}` and save it to object `bigdata` 
   
 **include something here about Movebank and that telemetry function is specifically for move/movebank data**  
 
@@ -100,7 +101,6 @@ Let's visualize...
 par(mfrow = c(1, 1))
 plot(coyotes, col = rainbow(length(coyotes)))
 title("All Coyotes")
-
 ```
 
 
@@ -113,7 +113,7 @@ plot(coy1)
 We can see from the clustering of GPS points that this coyote appears to be *range resident* with no obvious migrations. The next step of our workflow is to calculate and plot variograms from the GPS data for this individual.
 
 
-### Produce Variograms
+## Variograms
 
 Variograms represent autocorrelated data as the semi-variance between positions with varying time-lags. The structure of the variogram presents important information on the movement of an animal, as well as what method of movement modeling is best suited to the data. Arguably, the most crucial element of a variogram is if the semi-variance reaches an asymptote. This indicates that an animal is range-resident, which allows our range calculation to be meaningful. 
 
@@ -178,13 +178,10 @@ guess.fitted.mods <- ctmm.select(coy1,CTMM = coy1_GUESS,verbose = TRUE) #can tak
 summary(guess.fitted.mods)
 ```
 
-We see both methods yield the same model fittings. Thus - either are acceptable for initial parameter guessing.
-
-
+Both methods yield the same model fittings. Thus - either are acceptable for initial parameter guessing. 
 
 We can see from the summary above, that the *anisotropic* version of OUF is the ideal model. We can also see that the anisotropic versions of each model were favored over their isotropic counterpart (we are looking for lowest AIC values). We can now visually examine the fits of the anisotropic versions of OU and OUF models.
 
-*FS* - *I think this text can be added after we originally did the ctmm.select, since now we do not need to do it again*
 
 ```{r extract}
 #Extract the fitted anisotropic versions of IID,OU,and OUF.
@@ -192,19 +189,15 @@ OU<-guess.fitted.mods[[4]]
 OUF<-guess.fitted.mods[[1]]
 ```
 
+**EXPLAIN CTMM.FIT FUNCTION HERE**
+
+*takes ~2mins to run the fits below*
 ```{r max like hard way}
 M.OU <- ctmm.fit(coy1,OU)
-summary(M.OU)
 M.OUF <- ctmm.fit(coy1,OUF)
-summary(M.OUF)
-```
-*took ~2 mins to run both fits*
-
-lets look at this in an easier way
-
-```{r fits}
 FITS <- list(OU=M.OU,OUF=M.OUF)
 summary(FITS)
+
 ```
 
 AICc is the (linearly) corrected Akaike information criteria. AIC balances likelihood against model complexity in a way that is good if we want to make optimal predictions. A lower AIC is better, thus the OUF model seems better here.
