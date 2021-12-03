@@ -1,12 +1,12 @@
 ---
-title: "ctmm"
+title: "Continuous-Time Movement Modeling"
 author: "Zoe Albert, Natalia Kelley, Frank Short & Victoria Zdanowicz"
 output:
   html_document:
-    toc: TRUE
-    toc_depth: 5
-    toc_float: TRUE
     theme: cosmo
+    toc: TRUE
+    toc_depth: 2
+    toc_float: true
 ---
 
 ```{r setup, include=FALSE}
@@ -19,17 +19,21 @@ knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
 
 ---
 
-### Preliminaries
+### Preliminaries {.unlisted .unnumbered}
 - Install these packages in R: {ctmm}, {curl}, {rlist}, {dplyr}.
 
-### Objectives
+### Objectives {.unlisted .unnumbered}
 
->The objective of this module is to discuss the function and application of animal movement models, specifically, Contiuous-Time Movement Models (ctmm), and explore measures of overlap.
+>The objective of this module is to discuss the function and application of animal movement models, specifically, Contiuous-Time Movement Models (ctmm). We will explore functions from `{ctmm}` to calculate and plot hypothetical movement models with initial estimates, fit such models to actual data, and assess fits before applying results to further statistical analysis (i.e. range and overlap estimation).
+
+---
+
+## Background
 
 ---
 
 
-## A guy *walks* into a.... CTSP?
+### A guy *walks* into a.... ctmm? {.unlisted .unnumbered}
 
 <br>
 
@@ -38,6 +42,9 @@ knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
 ![](https://i.giphy.com/media/3o6MbrkU5vJroyqMUw/200w.gif)
 
 </center>
+
+
+
 
 ### Random Walk Models
 
@@ -73,7 +80,7 @@ CRWs were considered the standard for modeling movement data for a long time. Ho
 
 <br>
 
-### Continuous-Time Stochastic Process Models
+### Continuous-Time Stochastic Process
 
 Okay. Now, you’ve made it home from your run and you want to see the data on your fitness tracker app.  But, OH NO!  You must have accidentally turned it on last night when you were leaving the bar.  It tracked your uber ride home, when you got out of bed to get a glass of water, when you laid on the bathroom floor for a while, and then the run.  That is a lot of movement data!
 
@@ -87,7 +94,7 @@ Fortunately, the continuous-time movement modeling (ctmm) package for R was crea
 
 >*'Everything is related to everything else, but near things are more related than distant things' - Waldo R. Tobler* 
 
-As we have discussed in class previously, statistical analyses often rest on the assumption that data are independent and identically/normally distributed. However, we have also explored how such discrete independence is often not the case (like with our introduction to regression modeling). Investigating **autocorrelation**, the similarity of near observations, can reveal patterns and relationships that can better inform the selection of appropriate statistical analyses.
+As we have discussed in class previously, statistical analyses often rest on the assumption that data are independent and identically/normally distributed. However, we have also explored how such discrete independence is often not the case (like with our introduction to mixed effect modeling). Investigating **autocorrelation**, the similarity of near observations, can reveal patterns and relationships that can better inform the selection of appropriate statistical analyses.
 
 Spatial data have a strong tendency to be *dependent*, meaning near values are more/less similar than expected compared to randomly associated pairs of observations. When dealing with spatial data, like the animal movement data we are exploring here, **spatial autocorrelation** is a critical concept that drives model fitting and analysis. 
 
@@ -95,7 +102,7 @@ We will continue to explore this concept in greater detail as we dive deeper int
 
 ### `ctmm` & Movebank
 
-Recently there has been a rapid development and advancement of the technology associated with movement ecology (Calabrese et al. 2016).  The discrete-time correlated random walk, or CRW, had been the standard tool utilized for the statistical analysis of this data. Yet, this methodology is not precise and often confounds the movement process thus producing different results even when the exact same path is being sampled.  This is because CRW reflects the sampling schedule more than it does the actual process of movement (Calabrese et al. 2016).  The package ctmm solved this problem via the use of a continuous-time stochastic process (Calabrese et al. 2016).
+Recently there has been a rapid development and advancement of the technology associated with movement ecology (Calabrese et al. 2016). The discrete-time correlated random walk, or CRW, had been the standard tool utilized for the statistical analysis of this data. Yet, this methodology is not precise and often confounds the movement process thus producing different results even when the exact same path is being sampled.  This is because CRW reflects the sampling schedule more than it does the actual process of movement (Calabrese et al. 2016).  The package ctmm solved this problem via the use of a continuous-time stochastic process (Calabrese et al. 2016).
 
 *Movebank* is a free online tool that allows individuals to store and archive animal movement data to be used by other scientists and lay people alike (Mrozewski 2018). This website is an especially useful tool for cross species comparisons, as well as comparisons over time, and climate/ecological change (Kranstauber et al. 2011).  You can explore the website and various publicly available datasets for yourself [here](https://www.movebank.org/cms/movebank-main)!
 
@@ -113,9 +120,6 @@ Understanding animal movement is crucial when studying population ecology, disea
 ---
 
 As shown in the background literature, advancements in movement modelling have allowed for more accurate home range estimates that account for both the time dimension and autocorrelation in global position system (GPS) data. Below is an example of the implementation of the R package `{ctmm}` (Contnuous-Time Movement Modeling) to calculate the autocorrelated kernel density estimates (AKDE) of coyotes (*Canis latrans*) from publicly available movement data shared on Movebank (Mahoney & Young, 2017). These data were collected via Lotek GPS collars (Model GPS3300S; Lotek, Newmarket, ON, Canada) on 8 coyotes in Idaho between 2004-2015.  If you would like to also play around with this massive data set, take a look at the data repository on [Movebank](https://www.datarepository.movebank.org/handle/10255/move.588). 
-
-
----
 
 
 ### Data Configuration
@@ -276,6 +280,9 @@ The independent identically distributed (IID) process assumes each data point is
 
 This is especially relevant for improved data sampling methods which are able to combine long sampling periods and high resolution of sampling points. Given the extensive dataset used here, we can expect that our best fit movement model might be the OUF model. We also have to differentiate between the accuracy of *isotropic* versus *anisotropic* models for each movement model. By running `ctmm.fit` and `ctmm.select`, we can produce data to determine the best fit model. Once we have decided between isotropic and anisotropic, we can proceed to visualize those model types to confirm the results of the initial model guess.
 
+This function plots a variogram object overlayed with a continuous-time movement model guesstimated from the variogram's shape. Sliders are given to adjust the parameter guesstimates and the result can be saved to a global variable. The intention of this function is to facilitate good starting guesses for ctmm.fit, starting with a prototype hypothesis argument CTMM, which can contain features such as isotropic, range, circle, etc..
+
+
 <br>
 
 ### Comparing `variogram.fit` & `ctmm.guess`
@@ -284,11 +291,17 @@ This is especially relevant for improved data sampling methods which are able to
 
 Let's input the initial parameter estimates calculated from `variogram.fit` (`GUESS`) and `ctmm.guess` (`coy1_GUESS`) to compare the two methods.
 ```{r vg select}
-vg.fitted.mods <- ctmm.select(coy1,CTMM = GUESS,verbose = TRUE) #can take 5+ mins to run 
-guess.fitted.mods <- ctmm.select(coy1,CTMM = coy1_GUESS,verbose = TRUE) #can take 5+ mins to run
+
+#this takes ~10 mins to run
+
+vg.fitted.mods <- ctmm.select(coy1,CTMM = GUESS,verbose = TRUE)  
+guess.fitted.mods <- ctmm.select(coy1,CTMM = coy1_GUESS,verbose = TRUE) 
 ```
 
 ```{r guess select}
+
+#view the guesstimates
+
 summary(vg.fitted.mods)
 summary(guess.fitted.mods)
 ```
@@ -413,10 +426,14 @@ plot(vg.coy2, CTMM=M.OUF2, col.CTMM = '#1b1e77', fraction = 0.005)
 title("OUF")
 ```
 
+
+
 Which method fits the model best as suggested by the AICc? What do our plots show us about whether OU or OUF best fits the movement data?
+
+
 ---
 
-## CHALLENGE 2
+**CHALLENGE 2**
 
 ---
 
@@ -429,17 +446,21 @@ summary(coy2_FIT)
 
 ---
 
-## Autocorrelated Kernel Density
+## Kernel Density Estimation
 
 ---
 
-After confirming our fitted continuous-time movement model, we use this as the input in calculating **Autocorrelated Kernel Density Estimates** AKDE. We use the **AKDE** estimator to produce ecologically relevant metrics, such as home range size, range overlap, and occurrence distributions. It is essential to select the best fitting movement model to produce accurate AKDE metric estimates. Plotting the AKDE estimate defaults to show the 95% home range contour and corresponding 95% confidence intervals. The summary produces point estimates and confidence intervals. Other confidence intervals can be specified if desired.
+After confirming our fitted continuous-time movement model, we use this as the input in calculating **Autocorrelated Kernel Density Estimates, AKDE**. We use the **AKDE** estimator to produce ecologically relevant metrics, such as home range size, range overlap, and occurrence distributions. It is essential to select the best fitting movement model to produce accurate AKDE metric estimates. 
 
-Recall the methods we went over in [Module 19 - Introduction to GIS and Spatial Analysis in R](https://fuzzyatelin.github.io/bioanth-stats/module-GIS/module-GIS.html). Kernel density estimates (KDE) utilize the frequency of points to calculate the *density* of space usage areas utilized by an individual. However, kernel density estimation (KDE) utilizes a model that assumes independent and identically distributed data, or IID. As we have discussed, GPS locational data inherently is impacted by autocorrelation, which leads KDE methods to underestimate home range area. Fleming et al. (2017) lay out a new method of kernel density estimation, AKDE, as one that removes these biases and also can work with less than ideal sample sizes. Before calculating the autocorrelated density estimates (AKDE) for each of these individuals it is worthwhile to understand exactly what is happening "under the hood" statistically. 
+
+
+Recall the methods we went over in [Module 19 - Introduction to GIS and Spatial Analysis in R](https://fuzzyatelin.github.io/bioanth-stats/module-GIS/module-GIS.html). Kernel density estimates (KDE) utilize the frequency of points to calculate the *density* of space usage areas utilized by an individual. However, kernel density estimation (KDE) utilizes a model that assumes independent and identically distributed data, or **IID.** As we have discussed, GPS data are inherently impacted by spatial autocorrelation, which results in the underestimation of home range area by KDE methods. Fleming et al. (2017) lay out a new methodology of kernel density estimation, AKDE, which removes previous biases and cooperates with less than idea sample sizes. Before calculating the autocorrelated density estimates (AKDE) for the coyotes we are working with here, it is worthwhile to understand exactly what is happening "under the hood" statistically. 
+
+<br>
 
 ### Conventional Kernel Density
 
-More specifically, kernel density estimation works by using the movement data to create small kernels, which are a weighted function in non-parametric statistics that define the distribution of similar points around a given point *x*, with *k(x,y)* representing the similarity of point **x** given another point **y**. This bandwidth, or covariance, is denoted as **σB**. The average of these kernels are then used to estimate **p̂** of the probability density function (PDF) **p**. KDE are best calculated with the optimal bandwidth, as this reduces the mean integrated square error (MISE) between **p** and **p̂**. Fleming et al. (2015) estimate MISE in order to acheive optimal bandwidth as follows:
+More specifically, kernel density estimation works by using the movement data to create small *kernels*, which are a weighted function in non-parametric statistics that define the distribution of similar points around a given point **x**, with **k(x,y)** representing the similarity of point **x** given another point **y**. This bandwidth, or covariance, is denoted as **σ<sub>B</sub>**. The average of these kernels are then used to estimate **p̂** of the probability density function (PDF) **p**. KDE are best calculated with the optimal bandwidth, as this reduces the mean integrated square error (MISE) between **p** and **p̂**. Fleming et al. (2015) estimate MISE in order to achieve optimal bandwidth as follows:
 
 <center>
 
@@ -447,7 +468,7 @@ More specifically, kernel density estimation works by using the movement data to
 
 </center>
 
-Here, **σ0** represents the covariance of locations and **σB**, as discussed, represents the bandwidth. 
+Here, **σ<sub>0</sub>** represents the covariance of locations and **σ<sub>B</sub>**, as discussed, represents the bandwidth. 
 
 ### Autocorrelated Kernel Density
 
@@ -475,6 +496,8 @@ both.coyotes <- coyotes[c("coyG","coyH")]
 variograms <- list(vg.coy1, vg.coy2)
 plot.vg <- lapply(1:2, function(i) plot(variograms[[i]],fraction = 0.5))
 ```
+
+Plotting the AKDE estimate defaults to show the 95% home range contour and corresponding 95% confidence intervals. The summary produces point estimates and confidence intervals. Other confidence intervals can be specified if desired.
 
 ```{r guessss}
 GUESS_2 <- list(guess.fitted.mods, coy2_GUESS)
