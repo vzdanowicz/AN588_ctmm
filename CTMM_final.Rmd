@@ -1,6 +1,6 @@
 ---
 title: "Continuous-Time Movement Modeling"
-author: "Zoe Albert, Natalia Kelley, Frank Short & Victoria"
+author: "Zoe Albert, Natalia Kelley, Frank Short & Victoria Zdanowicz"
 output:
   html_document:
     toc: TRUE
