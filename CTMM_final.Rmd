@@ -58,7 +58,7 @@ CRW was so focused on the sampling schedule that it neglected continuous autocor
 
 Fortunately, the continuous-time movement modeling (ctmm) package for R was created. ctmm allows a broad array of movement related data analyses including diagnostic data visualization and model fitting. These parameters can be used to analyze various metrics related to animal movement. In this module, we will examine evidence of range residency, calculate home range size with confidence intervals, and visualize the overlap between the home ranges of two coyotes. 
 
-## Why Ctmm?
+## Why ctmm?
 
 Recently there has been a rapid development and advancement of the technology associated with movement ecology (Calabrese et al., 2016).  The discrete-time correlated random walk, or CRW, had been the standard tool utilized for the statistical analysis of this data. Yet, this methodology is not precise and often confounds the movement process thus producing different results even when the exact same path is being sampled.  This is because CRW reflects the sampling schedule more than it does the actual process of movement (Calabrese et al., 2016).  The package ctmm solved this problem via the use of a continuous-time stochastic process (Calabrese et al., 2016).
 
@@ -77,7 +77,7 @@ Understanding animal movement is crucial when studying population ecology, disea
 
 ---
 
-As shown in the background literature, advancements in movement modelling have allowed for more accurate home range estimates that account for both the time dimension and autocorrelation in global position system (GPS) data. Below is an example of the implementation of the R package `{ctmm}` (Contnuous-Time Movement Modeling) to calculate the autocorrelated kernel density estimates (AKDE) of coyotes (*Canis latrans*) from publicly available movement data shared on Movebank (Mahoney & Young, 2017). These data were collected via Lotek GPS collars (Model GPS3300S; Lotek, Newmarket, ON, Canada) on 8 coyotes in Idaho between 2004-2015.  **should add hyperlinks in to Movebank repository site and the doi of their paper**
+As shown in the background literature, advancements in movement modelling have allowed for more accurate home range estimates that account for both the time dimension and autocorrelation in global position system (GPS) data. Below is an example of the implementation of the R package `{ctmm}` (Contnuous-Time Movement Modeling) to calculate the autocorrelated kernel density estimates (AKDE) of coyotes (*Canis latrans*) from publicly available movement data shared on Movebank (Mahoney & Young, 2017). These data were collected via Lotek GPS collars (Model GPS3300S; Lotek, Newmarket, ON, Canada) on 8 coyotes in Idaho between 2004-2015.  If you would like to also play around with this massive data set, take a look at the data repository on [Movebank](https://www.datarepository.movebank.org/handle/10255/move.588). 
 
 We will begin by loading in a subset of their data. To start, we will only use data from ~ 1 months of the study (January 2005) because there are hundreds-of-thousands of data points and no one likes code that takes *days* to run :')
 
@@ -149,6 +149,7 @@ title("Long Lag")
 plot(vg.coy1,fraction=0.005)
 title("Short Lag")
 ```
+
 The asymptote of the variogram for `coy1` at longer (day) lags supports our visual analysis that `coy1` is **range-resident**, while the slight upward curve of the short (minutes) lags show evidence of **directional persistence** in the data. 
 
 ---
@@ -163,7 +164,6 @@ If run in your console, `variogram.fit()` allows you to visually assess and adju
 
 ```{r v fit}
 variogram.fit(vg.coy1)
-# Since we are knitting, I don't think the variogram fit will be able to be saved as an object without doing manually...
 GUESS<-variogram.fit(vg.coy1)
 ```
 We can also use `ctmm.guess()` and the variogram for `coy1`, `vg.coy1`, to estimate initial model parameters.
@@ -249,6 +249,7 @@ plot(vg.coy1,CTMM=FITS,col.CTMM=c("red","purple"),fraction=0.05,level=0.5)
 title("zoomed in")
 
 ```
+
 We can see the OU (pink) and OUF (purple) models plotted here against the variogram we created earlier. The zoomed in figure shows the purple line, the OUF model, follows the variogram more closely compared to the OU model. 
 
 ---
@@ -325,20 +326,18 @@ plot(vg.coy2, CTMM=M.OUF2, col.CTMM = '#1b1e77', fraction = 0.005)
 title("OUF")
 ```
 
+Which method fits the model best as suggested by the AICc? What do our plots show us about whether OU or OUF best fits the movement data?
 ---
 
 ## **CHALLENGE 2**
 
 ---
 
-Which method fits the model best as suggested by the AICc? What do our plots show us about whether OU or OUF best fits the movement data?
 
 ```{r fit2}
-# We don't need to fit again. Already fitted OUF previously. 
 coy2_FIT <- ctmm.fit(coy2, CTMM = M.OUF2, method = "pHREML", control = list(method="pNewton",cores=2), trace = TRUE)
 summary(coy2_FIT)
-# Is the same as:
-summary(M.OUF2)
+
 ```
 
 ---
@@ -349,13 +348,26 @@ summary(M.OUF2)
 
 After confirming our fitted continuous-time movement model, we use this as the input in calculating **Autocorrelated Kernel Density Estimates** AKDE. We use the **AKDE** estimator to produce ecologically relevant metrics, such as home range size, range overlap, and occurrence distributions. It is essential to select the best fitting movement model to produce accurate AKDE metric estimates. Plotting the AKDE estimate defaults to show the 95% home range contour and corresponding 95% confidence intervals. The summary produces point estimates and confidence intervals. Other confidence intervals can be specified if desired.
 
-AKDE is an important advancement in animal habitat analysis. The previously popular method, kernel density estimation (KDE) utilized the IID model which led to underestimation of home range area due to its failure to consider movement data autocorrelation. The AKDE estimator more accurately estimates home range size which can aid in wildlife habitat protection. Here we can see the plotted AKDE for CO28, as well as the estimated home range size.
+Recall the methods we went over in [Module 19 - Introduction to GIS and Spatial Analysis in R](https://fuzzyatelin.github.io/bioanth-stats/module-GIS/module-GIS.html). Kernel density estimates (KDE) utilize the frequency of points to calculate the *density* of space usage areas utilized by an individual. However, kernel density estimation (KDE) utilizes a model that assumes independent and identically distributed data, or IID. As we have discussed, GPS locational data inherently is impacted by autocorrelation, which leads KDE methods to underestimate home range area. Fleming et al. (2017) lay out a new method of kernel density estimation, AKDE, as one that removes these biases and also can work with less than ideal sample sizes. Before calculating the autocorrelated density estimates (AKDE) for each of these individuals it is worthwhile to understand exactly what is happening "under the hood" statistically. 
 
-# Overlap (Gaussian and AKDE)
+### Conventional Kernel Density
 
-lets just try to run both at the same time again !!! cries !!!
+More specifically, kernel density estimation works by using the movement data to create small kernels, which are a weighted function in non-parametric statistics that define the distribution of similar points around a given point *x*, with *k(x,y)* representing the similarity of point **x** given another point **y**. This bandwidth, or covariance, is denoted as **σB**. The average of these kernels are then used to estimate **p̂** of the probability density function (PDF) **p**. KDE are best calculated with the optimal bandwidth, as this reduces the mean integrated square error (MISE) between **p** and **p̂**. Fleming et al. (2015) estimate MISE in order to acheive optimal bandwidth as follows:
 
-*FS* - *REJOICE! With both models done, we don't have to do both again. We can just combine them in a list!*
+![](https://esajournals.onlinelibrary.wiley.com/cms/asset/7b63b15d-2deb-4e71-908a-9116fa2b4f48/ecy20159651182-math-0001.gif)
+
+Here, **σ0** represents the covariance of locations and **σB**, as discussed, represents the bandwidth. 
+
+### Autocorrelated Kernel Density
+
+For uncorrelated data, this method works best at estimating the MISE, but further changes must be made to better estimate error with autocorrelated data. To do this, Fleming et al.'s (2015) new estimator uses the same steps but relaxes the assumption of independently and indentically distributed data (IID). Here, the minimum occurs at the optimal bandwith. This new estimator for MISE is defined as follows:
+
+![](https://esajournals.onlinelibrary.wiley.com/cms/asset/8438a5bd-2583-4d93-bd1a-69609702fa11/ecy20159651182-math-0002.gif)
+
+Here **γ(τ)** is the semi-variance function (SVF), and **n(τ)** is the number of location pairs with time lag **t** between them. This function achieves optimal performance as autocorrelation increases, but operates efficiently for uncorrelated data as well by converging with the previously discussed function. Now we can see why we put so much work into analyzing autocorrelation via variograms! All of our previous model fitting is used to calculate the AKDE here, which incorporates autocorrelation to calculate a much more accurate kernel density estimation that reduces much of the problematic biases otherwise present. 
+
+# Autocorrelated Density Estimates, Overlap, and Conditional Distribution of Encounters for Coyotes 
+
 
 ```{r overlap prep}
 both.coyotes <- coyotes[c("coyG","coyH")]
@@ -409,6 +421,7 @@ plotting overlap
 plot(both.coyotes, UD = UDS_coyotes, col=rainbow(length(both.coyotes))) 
 
 ```
+
 We can also estimate the CDE (conditional distribution of encounters) (Noonan et al., 2020). CDE is a concept describing the long-term encounter location probabilities for movement within home ranges.
 
 ```{r CDE}
@@ -429,6 +442,10 @@ plot(both.coyotes,
 C, J. M., Fleming, C. H., & Gurarie, E. (2016). ctmm: an r package for analyzing animal relocation data as a continuous-time stochastic process. Methods in Ecology and Evolution, 7(9), 1124–1132.
 
 Codling, E. A., Plank, M. J., & Benhamou, S. (2008). Random walk models in biology. Journal of The Royal Society Interface, 5(25), 813–834. https://doi.org/10.1098/rsif.2008.0014
+
+Fleming, C. H., Fagan, W. F., Mueller, T., Olson, K. A., Leimgruber, P., & Calabrese, J. M. (2015). Rigorous home range estimation with movement data: a new autocorrelated kernel density estimator. Ecology, 96(5), 1182-1188.
+
+Fleming, C. H., & Calabrese, J. M. (2017). A new kernel density estimator for accurate home‐range and species‐range area estimation. Methods in Ecology and Evolution, 8(5), 571-579.
 
 Kranstauber, B., Cameron, A., Weinzerl, R., Fountain, T., Tilak, S., Wikelski, M., & Kays, R. (2011). The Movebank data model for animal tracking. Environmental Modelling & Software, 26(6), 834-835.
 
