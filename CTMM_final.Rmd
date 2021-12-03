@@ -11,14 +11,14 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-# Intro to Animal Movement Modeling 
+# Introduction to Animal Movement Modeling 
 
 ---
 
-## Preliminaries
+### Preliminaries
 - Install these packages in R: {ctmm}, {curl}, {rlist}, {dplyr}.
 
-## Objectives
+### Objectives
 
 >The objective of this module is to discuss the application and function of animal movement models, specifically, Contiuous-Time Movement Models (ctmm), and explore measures of overlap.
 
