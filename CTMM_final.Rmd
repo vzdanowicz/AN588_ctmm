@@ -58,6 +58,19 @@ CRW was so focused on the sampling schedule that it neglected continuous autocor
 
 Fortunately, the continuous-time movement modeling (ctmm) package for R was created. ctmm allows a broad array of movement related data analyses including diagnostic data visualization and model fitting. These parameters can be used to analyze various metrics related to animal movement. In this module, we will examine evidence of range residency, calculate home range size with confidence intervals, and visualize the overlap between the home ranges of two coyotes. 
 
+## Why Ctmm?
+
+Recently there has been a rapid development and advancement of the technology associated with movement ecology (Calabrese et al., 2016).  The discrete-time correlated random walk, or CRW, had been the standard tool utilized for the statistical analysis of this data. Yet, this methodology is not precise and often confounds the movement process thus producing different results even when the exact same path is being sampled.  This is because CRW reflects the sampling schedule more than it does the actual process of movement (Calabrese et al., 2016).  The package ctmm solved this problem via the use of a continuous-time stochastic process (Calabrese et al., 2016).
+
+### Why Movebank?
+
+Movebank is a free online tool that allows individuals to store and archive animal movement data to be used by other scientists and lay people alike (Mrozewski, 2018).  This website is an especially useful tool for cross species comparisons, as well as comparisons over time, and climate/ ecological change (Kranstauber et al., 2011).  You can explore the website for yourself here: [text](https://www.movebank.org/cms/movebank-main) 
+
+### Conservation Implications
+
+Understanding animal movement is crucial when studying population ecology, disease spread, the flow of genetic material, and conservation among other things (Calabrese et al., 2016).  In so far as conservation goes, this kind of data allows us to understand how animals are using their environments, and what can be considered their home ranges.  With this information, we can designate certain areas as protected, create corridors and encourage reforestation of degraded areas. 
+
+
 ---
 
 # Movement Data Analysis
@@ -416,4 +429,9 @@ plot(both.coyotes,
 C, J. M., Fleming, C. H., & Gurarie, E. (2016). ctmm: an r package for analyzing animal relocation data as a continuous-time stochastic process. Methods in Ecology and Evolution, 7(9), 1124–1132.
 
 Codling, E. A., Plank, M. J., & Benhamou, S. (2008). Random walk models in biology. Journal of The Royal Society Interface, 5(25), 813–834. https://doi.org/10.1098/rsif.2008.0014
+
+Kranstauber, B., Cameron, A., Weinzerl, R., Fountain, T., Tilak, S., Wikelski, M., & Kays, R. (2011). The Movebank data model for animal tracking. Environmental Modelling & Software, 26(6), 834-835.
+
+Mrozewski, T. (2018). Movebank. Bulletin-Association of Canadian Map Libraries and Archives (ACMLA), (158), 24-27.
+
 Nau, R. (2014, November 4). Notes on the random walk model - people.duke.edu. Notes on the random walk model. Retrieved 2021, from https://people.duke.edu/~rnau/Notes_on_the_random_walk_model--Robert_Nau.pdf
