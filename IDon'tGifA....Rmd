@@ -7,6 +7,9 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+Source of Information:
+https://stackoverflow.com/questions/34341808/is-there-a-way-to-add-a-gif-to-a-markdown-file
+
 ![](https://c.tenor.com/I9ZWYFwud1EAAAAM/white-chicks-white.gif)
 
 ![](https://i.giphy.com/media/3o6MbrkU5vJroyqMUw/200w.gif)
