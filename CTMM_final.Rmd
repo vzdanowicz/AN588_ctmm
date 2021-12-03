@@ -157,7 +157,7 @@ These parameters, `GUESS` and `coy1_GUESS`, are critical in our ability to asses
 
 ---
 
-## Model Fitting
+## Model Selection
 
 ---
 
@@ -197,7 +197,6 @@ M.OU <- ctmm.fit(coy1,OU)
 M.OUF <- ctmm.fit(coy1,OUF)
 FITS <- list(OU=M.OU,OUF=M.OUF)
 summary(FITS)
-
 ```
 
 AICc is the (linearly) corrected Akaike information criteria. AIC balances likelihood against model complexity in a way that is good if we want to make optimal predictions. A lower AIC is better, thus the OUF model seems better here.
@@ -217,9 +216,7 @@ plot(vg.coy1, CTMM=OUF, col.CTMM = '#1b1e77', fraction = 0.005)
 title("OUF")
 ```
 
-We can see from the figures above that OUF is a better fitted model (though not *great*!). The data we are using here are a subset of a **much** larger body of data. We reduced the number of observations so that the ctmm models would run in a reasonable amount of time, but it is likely that the OUF model would look even better fitted if more observation points were included. 
-
-*FS* - *Also, we can see that while OUF isn't perfect at shorter time lags, it is still adequate at the overal trend over multiple days*
+We can see from the figures above that OUF is a better fitted model (though not *perfect*!). The data we are using here are a subset of a **much** larger body of data. We reduced the number of observations so that the `ctmm` models would run in a reasonable amount of time, but it is likely that the OUF model would look even better fitted if more observation points were included. Additionally, even though the OUF model is not perfect in the shorter time lag plot, the overall trend over multiple days (longer time lag) is adequate.
 
 
 ```{r plot fits}
@@ -230,16 +227,29 @@ plot(vg.coy1,CTMM=FITS,col.CTMM=c("red","purple"),fraction=0.05,level=0.5)
 title("zoomed in")
 
 ```
+We can see the OU (pink) and OUF (purple) models plotted here against the variogram we created earlier. The zoomed in figure shows the purple line, the OUF model, follows the variogram more closely compared to the OU model. 
 
+---
 
-Selecting our model now
-```{r model select}
-FIT_A <- ctmm.fit(coy1, CTMM = OUF, method = "pHREML", control = list(method="pNewton",cores=2), trace = TRUE)
-summary(FIT_A)
+# Model Fitting
+
+---
+
+The previous steps revealed the OUF model is best suited for our data. We can now use `ctmm.fit` to fit our model via *maximum likelihood*. This function processes a `telemetry` object and model specification (i.e. OUF, OU, IID, etc.), returning the maximum likelihood parameter and interval estimates. The objects returned by `ctmm.fit` will allow us to compare the fitted model to the data. 
+
+*this can take ~2 mins to run*
+```{r ouf model fit1}
+coy1_FIT <- ctmm.fit(coy1, CTMM = OUF, method = "pHREML", control = list(method="pNewton",cores=2), trace = TRUE)
+summary(coy1_FIT)
 ```
-the [[1]] in the guess function thats included in ctmm.fit means it uses the best fit model determined from the previous guess function... this is in place of doing it by hand like it is done here (perhaps include sample code of that here)... CTMM = OUF based on our previous figures/calculations which show that is the best fit model compared to the OU model. the argument trace = TRUE provides a progress report in the console window as the ctmm.fit is run. *it took 1:14 to run this!*
+>NOTE: `CTMM = OUF` based on our previous figures/calculations which show that is the best fit model compared to the OU model. Additionally, the argument `trace = TRUE` provides a progress report in the console window as `ctmm.fit` runs. 
 
-CHALLENGE? (have class run through these steps to create ctmm object FIT_B for a different individual coyote to later determine overlap?)
+
+---
+
+## **CHALLENGE 1**
+
+---
 
 ```{r coy 2}
 coy2 <- coyotes$coyH
@@ -254,12 +264,6 @@ plot(vg.coy2,fraction=0.005)
 ```
 
 
-
-
-
-
-##Questions for Challenge 1##
-
 What do the variograms for this coyote suggest? What might the overall picture of the first variogram mean? How about the second variogram which is zoomed in?
 
 ```{r v fit2}
@@ -270,19 +274,24 @@ variogram.fit(vg.coy2)
 coy2_GUESS <- ctmm.guess(coy2,variogram = vg.coy2,interactive=FALSE)
 coy2_SELECT <- ctmm.select(coy2,CTMM = coy2_GUESS,verbose = TRUE)
 summary(coy2_SELECT)
+```
 
+
+```{r 2select}
 OU2<-coy2_SELECT[[4]]
 OUF2<-coy2_SELECT[[1]]
+```
 
+```{r model2 compare}
 M.OU2 <- ctmm.fit(coy2,OU2)
-summary(M.OU2)
-
 M.OUF2 <- ctmm.fit(coy2,OUF2)
-summary(M.OUF2)
+
 
 FITS2 <- list(OU=M.OU2,OUF=M.OUF2)
 summary(FITS2)
+```
 
+```{r plot models2}
 par(mfrow = c(2, 2))
 plot(vg.coy2, CTMM=M.OU2, col.CTMM = '#1b9e77')
 title("OU")
@@ -292,33 +301,35 @@ plot(vg.coy2, CTMM=M.OUF2, col.CTMM = '#1b1e77')
 title("OUF")
 plot(vg.coy2, CTMM=M.OUF2, col.CTMM = '#1b1e77', fraction = 0.005)
 title("OUF")
-
-
 ```
-##Questions for Challenge 2##
+
+---
+
+## **CHALLENGE 2**
+
+---
 
 Which method fits the model best as suggested by the AICc? What do our plots show us about whether OU or OUF best fits the movement data?
 
-
 ```{r fit2}
 # We don't need to fit again. Already fitted OUF previously. 
-FIT_B <- ctmm.fit(coy2, CTMM = coy2_GUESS, method = "pHREML", control = list(method="pNewton",cores=2), trace = TRUE)
-summary(FIT_B)
+coy2_FIT <- ctmm.fit(coy2, CTMM = M.OUF2, method = "pHREML", control = list(method="pNewton",cores=2), trace = TRUE)
+summary(coy2_FIT)
 # Is the same as:
 summary(M.OUF2)
 ```
 
+---
 
+# Autocorrelated Kernel Density Estimates
 
-used argument trace = TRUE to follow along progress of running the model. this process will show us each of the possible standard models which we can then assess to determine which is the best fit for the dataset. the model above includes 9180 obsv compared to coyote(coy1) which has 9085... should honestly use the much smaller file that has less observations so it runs faster! *5 mins for OUR anisotropic, 3 mins for OU anisotropic, 3 mins for OUf anisotropic,4 mins for OUF isotropic (15 mins total.. rip)*
+---
 
-**Step 5: Autocorrelated Kernel Density Estimate Calculation**
+After confirming our fitted continuous-time movement model, we use this as the input in calculating **Autocorrelated Kernel Density Estimates** AKDE. We use the **AKDE** estimator to produce ecologically relevant metrics, such as home range size, range overlap, and occurrence distributions. It is essential to select the best fitting movement model to produce accurate AKDE metric estimates. Plotting the AKDE estimate defaults to show the 95% home range contour and corresponding 95% confidence intervals. The summary produces point estimates and confidence intervals. Other confidence intervals can be specified if desired.
 
-  After confirming our fitted continuous-time movement model, we use this as the input for the AKDE. We use the AKDE estimator to produce ecologically relevant metrics, such as home range size, range overlap, and occurrence distributions. It is essential to select the best fitting movement model to produce accurate AKDE metric estimates. Plotting the AKDE estimate defaults to show the 95% home range contour and corresponding 95% confidence intervals. The summary produces point estimates and confidence intervals. Other confidence intervals can be specified if desired.
+AKDE is an important advancement in animal habitat analysis. The previously popular method, kernel density estimation (KDE) utilized the IID model which led to underestimation of home range area due to its failure to consider movement data autocorrelation. The AKDE estimator more accurately estimates home range size which can aid in wildlife habitat protection. Here we can see the plotted AKDE for CO28, as well as the estimated home range size.
 
-  AKDE is an important advancement in animal habitat analysis. The previously popular method, kernel density estimation (KDE) utilized the IID model which led to underestimation of home range area due to its failure to consider movement data autocorrelation. The AKDE estimator more accurately estimates home range size which can aid in wildlife habitat protection. Here we can see the plotted AKDE for CO28, as well as the estimated home range size.
-
-**Step 6: Calculate overlap (Gaussian and AKDE) of each individual**
+# Overlap (Gaussian and AKDE)
 
 lets just try to run both at the same time again !!! cries !!!
 
@@ -335,7 +346,7 @@ plot.vg <- lapply(1:2, function(i) plot(variograms[[i]],fraction = 0.5))
 
 ```{r guessss}
 GUESS_2 <- list(guess.fitted.mods, coy2_GUESS)
-FITS_2 <- list(FIT_A, M.OUF2)
+FITS_2 <- list(coy1_FIT, coy2_FIT)
 
 par(mfrow = c(2, 2))
 plot(variograms[[1]],CTMM=FITS_2,col.CTMM=c("purple"),fraction=0.65,level=0.5)
@@ -380,7 +391,6 @@ We can also estimate the CDE (conditional distribution of encounters) (Noonan et
 
 ```{r CDE}
 CDE_coyotes <- encounter(UDS_coyotes)
-CDE_coyotes
 
 plot(both.coyotes,
      col=c("#FF0000", "#F2AD00"),
