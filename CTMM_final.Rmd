@@ -84,11 +84,14 @@ CRWs were considered the standard for modeling movement data for a long time. Ho
 
 Okay. Now, you’ve made it home from your run and you want to see the data on your fitness tracker app.  But, OH NO!  You must have accidentally turned it on last night when you were leaving the bar.  It tracked your uber ride home, when you got out of bed to get a glass of water, when you laid on the bathroom floor for a while, and then the run.  That is a lot of movement data!
 
-This, like any GPS monitoring system, is an example of continuous-time stochastic process modeling. That is, this is a model that accounts for finely sampled and continuous modern data collection (Calabrese et al. 2016).
+This, like any GPS monitoring system, is an example of **continuous-time stochastic process (CTSP) modeling**. That is, this is a model that accounts for finely sampled and continuous modern data collection (Calabrese et al. 2016). The discrete-time correlated random walk, or CRW, had been the standard tool utilized for the statistical analysis of this data. Yet, this methodology is not precise and often confounds the movement process thus producing different results even when the exact same path is being sampled. This is because CRW reflects the sampling schedule more than it does the actual process of movement (Calabrese et al. 2016). 
 
-CRW was so focused on the sampling schedule that it neglected continuous autocorrelated movement. CTSP models, on the other hand, are able to separate these factors while taking both into consideration. CTSP models are able to accommodate a range of data characteristics including irregular sampling schedules and varying levels of autocorrelation. However, CTSP modeling can be statistically complex and lack of comprehensive software to process this kind of data made it relatively inaccessible. 
+CTSP models, on the other hand, consider both sampling schedule and continuous autocorrelated movement. These models are able to accommodate a range of data characteristics including irregular sampling schedules and varying levels of autocorrelation. However, CTSP modeling can be statistically complex and movement ecologists historically lacked a comprehensive software to process such complex modeling.
 
-Fortunately, the continuous-time movement modeling (ctmm) package for R was created. ctmm allows a broad array of movement related data analyses including diagnostic data visualization and model fitting. These parameters can be used to analyze various metrics related to animal movement. In this module, we will examine evidence of range residency, calculate home range size with confidence intervals, and visualize the overlap between the home ranges of two coyotes. 
+Fortunately, the continuous-time movement modeling `{ctmm}` package for R was created (Fleming & Calabrese 2015). `ctmm` allows a broad array of movement related data analyses including diagnostic data visualization and model fitting. These parameters can be used to analyze various metrics related to animal movement. In this module, we will examine evidence of range residency, calculate home range size with confidence intervals, and visualize the overlap between the home ranges of two coyotes. 
+
+The `{ctmm}` package was designed to easily accommodate movement data from *Movebank*, a free online tool/repository for storing and downloading animal movement data. *Movebank* is an especially useful tool for cross species comparisons, as well as comparisons over time, and climate/ecological change (Kranstauber et al. 2011). You can explore the website and various publicly available datasets for yourself [here](https://www.movebank.org/cms/movebank-main)!  
+
 
 ### Spatial Autocorrelation
 
@@ -100,11 +103,6 @@ Spatial data have a strong tendency to be *dependent*, meaning near values are m
 
 We will continue to explore this concept in greater detail as we dive deeper into the components of `ctmm` modeling which help ensure our spatial models are statistically meaningful.
 
-### `ctmm` & Movebank
-
-Recently there has been a rapid development and advancement of the technology associated with movement ecology (Calabrese et al. 2016). The discrete-time correlated random walk, or CRW, had been the standard tool utilized for the statistical analysis of this data. Yet, this methodology is not precise and often confounds the movement process thus producing different results even when the exact same path is being sampled.  This is because CRW reflects the sampling schedule more than it does the actual process of movement (Calabrese et al. 2016).  The package ctmm solved this problem via the use of a continuous-time stochastic process (Calabrese et al. 2016).
-
-*Movebank* is a free online tool that allows individuals to store and archive animal movement data to be used by other scientists and lay people alike (Mrozewski 2018). This website is an especially useful tool for cross species comparisons, as well as comparisons over time, and climate/ecological change (Kranstauber et al. 2011).  You can explore the website and various publicly available datasets for yourself [here](https://www.movebank.org/cms/movebank-main)!
 
 ### Conservation Implications
 
@@ -119,7 +117,7 @@ Understanding animal movement is crucial when studying population ecology, disea
 
 ---
 
-As shown in the background literature, advancements in movement modelling have allowed for more accurate home range estimates that account for both the time dimension and autocorrelation in global position system (GPS) data. Below is an example of the implementation of the R package `{ctmm}` (Contnuous-Time Movement Modeling) to calculate the autocorrelated kernel density estimates (AKDE) of coyotes (*Canis latrans*) from publicly available movement data shared on Movebank (Mahoney & Young, 2017). These data were collected via Lotek GPS collars (Model GPS3300S; Lotek, Newmarket, ON, Canada) on 8 coyotes in Idaho between 2004-2015.  If you would like to also play around with this massive data set, take a look at the data repository on [Movebank](https://www.datarepository.movebank.org/handle/10255/move.588). 
+Recently there has been a rapid development and advancement of the technology associated with movement ecology (Calabrese et al., 2016). As shown in the background literature, advancements in movement modelling have allowed for more accurate home range estimates that account for both the time dimension and autocorrelation in global position system (GPS) data. Below is an example of the implementation of the R package `{ctmm}` (Contnuous-Time Movement Modeling) to calculate the autocorrelated kernel density estimates (AKDE) of coyotes (*Canis latrans*) from publicly available movement data shared on Movebank (Mahoney & Young, 2017). These data were collected via Lotek GPS collars (Model GPS3300S; Lotek, Newmarket, ON, Canada) on 8 coyotes in Idaho between 2004-2015.  If you would like to also play around with this massive data set, take a look at the data repository on [Movebank](https://www.datarepository.movebank.org/handle/10255/move.588). 
 
 
 ### Data Configuration
@@ -265,27 +263,8 @@ coy1_GUESS <- ctmm.guess(coy1,variogram = vg.coy1,interactive=FALSE)
 These parameters, `GUESS` and `coy1_GUESS`, are critical in our ability to assess the most suitable model type for the data at hand. We will next explore how `ctmm.select` and `ctmm.fit` allow us to test and visualize potential model types.
 
 <br>
-<br>
 
----
-
-## Model Selection
-
----
-
-
-In order to use autocorrelated kernel density estimation (AKDE) to perform accurate home range analyses, we have to ensure that our data indicates range residency and then choose the best model to represent the data. The first step as discussed above is to use a variogram to visualize whether movement is confined to a given space or home range. Then, a movement model is chosen.
-  
-The independent identically distributed (IID) process assumes each data point is independent and random. However, animal movement is automatically correlated since one's location in space is dependent on continuous movement (i.e. coyotes *also*  can't teleport). This means the IID model is not a good model for our purposes despite it's use in older kernel density estimation metrics. The brownian motion (BM) process assumes random movement and diffusion in unlimited space and is good for data not comprehensive enough to demonstrate home range or velocity autocorrelation. Typically, BM processes are not suitable for our purposes. However, the Ohrnstein-Uhlenbeck (OU) process uses BM but assumes fidelity to a general location and is suitable for data which shows signs of residency. What this model lacks is the ability to incorporate autocorrelated velocities. The integrated OU (IOU) process solves this problem for data with high resolution but is unable to demonstrate range residency. All of these shortcomings are solved in the Ohrnstein-Uhlenbeck Foraging (OUF) process which combines OU and IOU processes to enable analysis of data demonstrating both velocity autocorrelation and range residency.
-
-This is especially relevant for improved data sampling methods which are able to combine long sampling periods and high resolution of sampling points. Given the extensive dataset used here, we can expect that our best fit movement model might be the OUF model. We also have to differentiate between the accuracy of *isotropic* versus *anisotropic* models for each movement model. By running `ctmm.fit` and `ctmm.select`, we can produce data to determine the best fit model. Once we have decided between isotropic and anisotropic, we can proceed to visualize those model types to confirm the results of the initial model guess.
-
-This function plots a variogram object overlayed with a continuous-time movement model guesstimated from the variogram's shape. Sliders are given to adjust the parameter guesstimates and the result can be saved to a global variable. The intention of this function is to facilitate good starting guesses for ctmm.fit, starting with a prototype hypothesis argument CTMM, which can contain features such as isotropic, range, circle, etc..
-
-
-<br>
-
-### Comparing `variogram.fit` & `ctmm.guess`
+### Comparing Parameter Estimates
 
 <br>
 
@@ -311,6 +290,51 @@ Both methods yield the same model fittings. Thus - either are acceptable for ini
 We can see from the summaries above that the *anisotropic* version of OUF is the ideal model for our data. We can also see that the anisotropic versions of each model were favored over their isotropic counterpart (we are looking for lowest AIC values). We can now visually examine the fits of the anisotropic versions of OU and OUF models.
 
 <br>
+
+---
+
+**CHALLENGE 2**
+
+---
+
+Follow the steps outlined above to calculate guesstimate parameters of our second individual, `coy2`, for model selection and testing.
+
+- When considering your `coy2` plot from earlier and fit variogram, how do the visualization of `coy1` movement differ?
+- What do you think may contribute to differences in both parameter estimates?
+
+
+```{r v fit2}
+variogram.fit(vg.coy2)
+```
+
+```{r model2}
+coy2_GUESS <- ctmm.guess(coy2,variogram = vg.coy2,interactive=FALSE)
+coy2_SELECT <- ctmm.select(coy2,CTMM = coy2_GUESS,verbose = TRUE)
+summary(coy2_SELECT)
+```
+
+
+
+
+---
+
+## Model Selection
+
+---
+
+
+In order to use autocorrelated kernel density estimation (AKDE) to perform accurate home range analyses, we have to ensure that our data indicates range residency and then choose the best model to represent the data. The first step as discussed above is to use a variogram to visualize whether movement is confined to a given space or home range. Then, a movement model is chosen.
+  
+The independent identically distributed (IID) process assumes each data point is independent and random. However, animal movement is automatically correlated since one's location in space is dependent on continuous movement (i.e. coyotes *also*  can't teleport). This means the IID model is not a good model for our purposes despite it's use in older kernel density estimation metrics. The brownian motion (BM) process assumes random movement and diffusion in unlimited space and is good for data not comprehensive enough to demonstrate home range or velocity autocorrelation. Typically, BM processes are not suitable for our purposes. However, the Ohrnstein-Uhlenbeck (OU) process uses BM but assumes fidelity to a general location and is suitable for data which shows signs of residency. What this model lacks is the ability to incorporate autocorrelated velocities. The integrated OU (IOU) process solves this problem for data with high resolution but is unable to demonstrate range residency. All of these shortcomings are solved in the Ohrnstein-Uhlenbeck Foraging (OUF) process which combines OU and IOU processes to enable analysis of data demonstrating both velocity autocorrelation and range residency.
+
+This is especially relevant for improved data sampling methods which are able to combine long sampling periods and high resolution of sampling points. Given the extensive dataset used here, we can expect that our best fit movement model might be the OUF model. We also have to differentiate between the accuracy of *isotropic* versus *anisotropic* models for each movement model. By running `ctmm.fit` and `ctmm.select`, we can produce data to determine the best fit model. Once we have decided between isotropic and anisotropic, we can proceed to visualize those model types to confirm the results of the initial model guess.
+
+This function plots a variogram object overlayed with a continuous-time movement model guesstimated from the variogram's shape. Sliders are given to adjust the parameter guesstimates and the result can be saved to a global variable. The intention of this function is to facilitate good starting guesses for ctmm.fit, starting with a prototype hypothesis argument CTMM, which can contain features such as isotropic, range, circle, etc..
+
+
+<br>
+
+
 
 ### Assessing Model Types
 
@@ -338,24 +362,26 @@ FITS <- list(OU=M.OU,OUF=M.OUF)
 summary(FITS)
 ```
 
-AICc is the (linearly) corrected Akaike information criteria. AIC balances likelihood against model complexity in a way that is good if we want to make optimal predictions. A lower AIC is better, thus the OUF model seems better here.
+AICc is the (linearly) corrected Akaike information criteria. AIC balances likelihood against model complexity in a way that is good if we want to make optimal predictions. A lower AIC is better, thus the OUF model seems better here. 
+**EXPLAIN  AICC HERE..  ADD LINK TO FURTHER  INFORMATION**
 
 The fit parameter DOF[mean] is the number of degrees of freedom worth of data we have to estimate the stationary mean parameter, assuming that the model is correct. 
 
-
+**ADD SOMETHING HERE ABOUT HOW PLOTTING THE MODEL TYPESE CAN HELP US VISUALLY ASSESS BEST FIT**
 ```{r plot fit mods}
 par(mfrow = c(2, 2))
 plot(vg.coy1, CTMM=OU, col.CTMM = '#1b9e77')
-title("OU")
+title("OU (long)")
 plot(vg.coy1, CTMM=OU, col.CTMM = '#1b9e77', fraction = 0.005)
-title("OU")
+title("OU (short)")
 plot(vg.coy1, CTMM=OUF, col.CTMM = '#1b1e77')
-title("OUF")
+title("OUF (long)")
 plot(vg.coy1, CTMM=OUF, col.CTMM = '#1b1e77', fraction = 0.005)
-title("OUF")
+title("OUF (short)")
 ```
 
 We can see from the figures above that OUF is a better fitted model (though not *perfect*!). The data we are using here are a subset of a **much** larger body of data. We reduced the number of observations so that the `ctmm` models would run in a reasonable amount of time, but it is likely that the OUF model would look even better fitted if more observation points were included. Additionally, even though the OUF model is not perfect in the shorter time lag plot, the overall trend over multiple days (longer time lag) is adequate.
+
 
 
 ```{r plot fits}
@@ -387,17 +413,6 @@ summary(coy1_FIT)
 
 
 
-CHALLENGE 2?
-
-```{r v fit2}
-variogram.fit(vg.coy2)
-```
-
-```{r model2}
-coy2_GUESS <- ctmm.guess(coy2,variogram = vg.coy2,interactive=FALSE)
-coy2_SELECT <- ctmm.select(coy2,CTMM = coy2_GUESS,verbose = TRUE)
-summary(coy2_SELECT)
-```
 
 
 ```{r 2select}
@@ -493,38 +508,43 @@ both.coyotes <- coyotes[c("coyG","coyH")]
 
 #variograms
 
-variograms <- list(vg.coy1, vg.coy2)
+vg.coyotes <- list(vg.coy1, vg.coy2)
 plot.vg <- lapply(1:2, function(i) plot(variograms[[i]],fraction = 0.5))
 ```
 
 Plotting the AKDE estimate defaults to show the 95% home range contour and corresponding 95% confidence intervals. The summary produces point estimates and confidence intervals. Other confidence intervals can be specified if desired.
 
 ```{r guessss}
-GUESS_2 <- list(guess.fitted.mods, coy2_GUESS)
-FITS_2 <- list(coy1_FIT, coy2_FIT)
-
-par(mfrow = c(2, 2))
-plot(variograms[[1]],CTMM=FITS_2,col.CTMM=c("purple"),fraction=0.65,level=0.5)
-plot(variograms[[1]],CTMM=FITS_2,col.CTMM=c("purple"),fraction=0.05,level=0.5)
-plot(variograms[[2]],CTMM=FITS_2,col.CTMM=c("blue"),fraction=0.65,level=0.5)
-plot(variograms[[2]],CTMM=FITS_2,col.CTMM=c("blue"),fraction=0.05,level=0.5)
+coyotes_GUESS <- list(coy1_GUESS, coy2_GUESS)
+coyotes_FITS <- list(coy1_FIT, coy2_FIT)
+names(coyotes_FITS) <- names(both.coyotes[1:2])
 ```
 
 
 ```{r names}
-names(FITS_2) <- names(both.coyotes[1:2])
+par(mfrow = c(2, 2))
+plot(variograms[[1]],CTMM=coyotes_FITS,col.CTMM=c("purple"),fraction=0.65,level=0.5)
+plot(variograms[[1]],CTMM=coyotes_FITS,col.CTMM=c("purple"),fraction=0.05,level=0.5)
+plot(variograms[[2]],CTMM=coyotes_FITS,col.CTMM=c("blue"),fraction=0.65,level=0.5)
+plot(variograms[[2]],CTMM=coyotes_FITS,col.CTMM=c("blue"),fraction=0.05,level=0.5)
 ```
 
 AKDE corrects for biases due to autocorrelation, small effective sample size, and irregular sampling in time
 ```{r akde}
-UDS_coyotes <- akde(both.coyotes[1:2],FITS_2)
+UDS_coyotes <- akde(both.coyotes[1:2],coyotes_FITS)
+
+par(mfrow = c(1, 2))
 plot(UDS_coyotes[[1]])
-
-summary(UDS_coyotes[[1]])
-
+title('coy1')
 plot(UDS_coyotes[[2]])
+title('coy2')
+```
 
-summary(UDS_coyotes[[2]])
+```{r uds summ}
+UDS_coy1 <- summary(UDS_coyotes[[1]])
+UDS_coy2 <- summary(UDS_coyotes[[2]])
+UDS_summary <- list(coy1 = UDS_coy1, coy2 = UDS_coy2)
+UDS_summary
 ```
 
 This function calculates a useful measure of similarity between distributions evaluate overlap of 95% Home Range.The choice method="BA" computes the Bhattacharyya's affinity (BA). Values range from zero (no overlap) to 1 (identical Utilization Distributions).
@@ -532,7 +552,6 @@ This function calculates a useful measure of similarity between distributions ev
 95% level of confidence
 ```{r overrlap}
 overlap(UDS_coyotes)
-
 ```
 plotting overlap
 ```{r plot overlap}
@@ -560,7 +579,7 @@ plot(both.coyotes,
 
 
 
-**Literature Cited**
+**References**
 
 C, J. M., Fleming, C. H., & Gurarie, E. (2016). ctmm: an r package for analyzing animal relocation data as a continuous-time stochastic process. Methods in Ecology and Evolution, 7(9), 1124–1132.
 
@@ -569,6 +588,8 @@ Codling, E. A., Plank, M. J., & Benhamou, S. (2008). Random walk models in biolo
 Fleming, C. H., Fagan, W. F., Mueller, T., Olson, K. A., Leimgruber, P., & Calabrese, J. M. (2015). Rigorous home range estimation with movement data: a new autocorrelated kernel density estimator. Ecology, 96(5), 1182-1188.
 
 Fleming, C. H., & Calabrese, J. M. (2017). A new kernel density estimator for accurate home‐range and species‐range area estimation. Methods in Ecology and Evolution, 8(5), 571-579.
+
+Fleming, C.H. & Calabrese, J.M. (2015). ctmm: Continuous-Time Movement Modeling.Rpackage version 0.3.0.
 
 Kranstauber, B., Cameron, A., Weinzerl, R., Fountain, T., Tilak, S., Wikelski, M., & Kays, R. (2011). The Movebank data model for animal tracking. Environmental Modelling & Software, 26(6), 834-835.
 
