@@ -117,6 +117,11 @@ Understanding animal movement is crucial when studying population ecology, disea
 
 ---
 
+![](https://i.makeagif.com/media/10-09-2017/qqnXBX.gif)
+
+![](https://media2.giphy.com/media/135Bh75GkIjblm/giphy.gif?cid=ecf05e47v2r369x90ppbe7e8ufeslmpibnmldg8hf9yjjfhg&rid=giphy.gif&ct=g)
+
+
 Recently there has been a rapid development and advancement of the technology associated with movement ecology (Calabrese et al., 2016). As shown in the background literature, advancements in movement modelling have allowed for more accurate home range estimates that account for both the time dimension and autocorrelation in global position system (GPS) data. Below is an example of the implementation of the R package `{ctmm}` (Contnuous-Time Movement Modeling) to calculate the autocorrelated kernel density estimates (AKDE) of coyotes (*Canis latrans*) from publicly available movement data shared on Movebank (Mahoney & Young, 2017). These data were collected via Lotek GPS collars (Model GPS3300S; Lotek, Newmarket, ON, Canada) on 8 coyotes in Idaho between 2004-2015.  If you would like to also play around with this massive data set, take a look at the data repository on [Movebank](https://www.datarepository.movebank.org/handle/10255/move.588). 
 
 
@@ -362,12 +367,12 @@ FITS <- list(OU=M.OU,OUF=M.OUF)
 summary(FITS)
 ```
 
-AICc is the (linearly) corrected Akaike information criteria. AIC balances likelihood against model complexity in a way that is good if we want to make optimal predictions. A lower AIC is better, thus the OUF model seems better here. 
-**EXPLAIN  AICC HERE..  ADD LINK TO FURTHER  INFORMATION**
+AICc is the (linearly) corrected Akaike information criteria. AIC balances likelihood against model complexity in a way that is good if we want to make optimal predictions. Recall from [Module 16 - Model Selection in General Linear Regression](https://fuzzyatelin.github.io/bioanth-stats/module-16/module-16.html) that AIC helps us to determine which model has the best fit. This metric is typically calculated via  *-2(log-likelihood) + 2K* with the log-likelihood being a measure of a model's fit and K is the number of parameters within the model. In addition to assessing fit, AICc typically penalizes model complexity to encourage the removal of unnecessary predictor variables. While AIC does not tell us how good a model is on its own, it is useful in comparisons like these to assess fit. Here, OUF would be the better model.
 
 The fit parameter DOF[mean] is the number of degrees of freedom worth of data we have to estimate the stationary mean parameter, assuming that the model is correct. 
 
-**ADD SOMETHING HERE ABOUT HOW PLOTTING THE MODEL TYPESE CAN HELP US VISUALLY ASSESS BEST FIT**
+Now, we will plot each of the methods over the original data variogram to see which model best fits our data. By doing this, we get a good idea of which model is operating efficiently over both long and short time lags.
+
 ```{r plot fit mods}
 par(mfrow = c(2, 2))
 plot(vg.coy1, CTMM=OU, col.CTMM = '#1b9e77')
