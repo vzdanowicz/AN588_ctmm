@@ -474,7 +474,7 @@ After confirming our fitted continuous-time movement model, we use this as the i
 
 
 
-Recall the methods we went over in [Module 19 - Introduction to GIS and Spatial Analysis in R](https://fuzzyatelin.github.io/bioanth-stats/module-GIS/module-GIS.html). Kernel density estimates (KDE) utilize the frequency of points to calculate the *density* of space usage areas utilized by an individual. However, kernel density estimation (KDE) utilizes a model that assumes independent and identically distributed data, or **IID.** As we have discussed, GPS data are inherently impacted by spatial autocorrelation, which results in the underestimation of home range area by KDE methods. Fleming et al. (2017) lay out a new methodology of kernel density estimation, AKDE, which removes previous biases and cooperates with less than idea sample sizes. Before calculating the autocorrelated density estimates (AKDE) for the coyotes we are working with here, it is worthwhile to understand exactly what is happening "under the hood" statistically. 
+Recall the methods we went over in [Module 19 - Introduction to GIS and Spatial Analysis in R](https://fuzzyatelin.github.io/bioanth-stats/module-GIS/module-GIS.html). Kernel density estimates (KDE) utilize the frequency of points to calculate the *density* of space usage areas utilized by an individual. However, kernel density estimation (KDE) utilizes a model that assumes independent and identically distributed data, or **IID.** As we have discussed, GPS data are inherently impacted by spatial autocorrelation, which results in the underestimation of home range area by KDE methods. Fleming et al. (2017) lay out a new methodology of kernel density estimation, AKDE, which removes previous biases and cooperates with less than ideal sample sizes. Before calculating the autocorrelated density estimates (AKDE) for the coyotes we are working with here, it is worthwhile to understand exactly what is happening "under the hood" statistically. 
 
 <br>
 
@@ -590,11 +590,11 @@ C, J. M., Fleming, C. H., & Gurarie, E. (2016). ctmm: an r package for analyzing
 
 Codling, E. A., Plank, M. J., & Benhamou, S. (2008). Random walk models in biology. Journal of The Royal Society Interface, 5(25), 813–834. https://doi.org/10.1098/rsif.2008.0014
 
+Fleming, C.H. & Calabrese, J.M. (2015). ctmm: Continuous-Time Movement Modeling.Rpackage version 0.3.0.
+
 Fleming, C. H., Fagan, W. F., Mueller, T., Olson, K. A., Leimgruber, P., & Calabrese, J. M. (2015). Rigorous home range estimation with movement data: a new autocorrelated kernel density estimator. Ecology, 96(5), 1182-1188.
 
 Fleming, C. H., & Calabrese, J. M. (2017). A new kernel density estimator for accurate home‐range and species‐range area estimation. Methods in Ecology and Evolution, 8(5), 571-579.
-
-Fleming, C.H. & Calabrese, J.M. (2015). ctmm: Continuous-Time Movement Modeling.Rpackage version 0.3.0.
 
 Kranstauber, B., Cameron, A., Weinzerl, R., Fountain, T., Tilak, S., Wikelski, M., & Kays, R. (2011). The Movebank data model for animal tracking. Environmental Modelling & Software, 26(6), 834-835.
 
