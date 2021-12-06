@@ -29,3 +29,33 @@ plot(buffalo[1:2], UD = B.UDS, col=rainbow(length(buffalo[1:2])))
 #The middle contour represent the maximum likelihood area where the animal spends 50% of its time.
 plot(buffalo[1:2], UD = B.UDS, level.UD = 0.5, col=rainbow(length(buffalo[1:2]))) 
 
+
+```{r fit resid}
+# calculate residuals
+OU.RES <- residuals(coy1,M.OU)
+OUF.RES <- residuals(coy1,M.OUF)
+
+# scatter plot of residuals with 50%, 95%, and 99.9% quantiles
+par(mfrow = c(1, 2))
+plot(OU.RES,col.DF=NA,level.UD=c(.50,.95,0.999))
+plot(OUF.RES,col.DF=NA,level.UD=c(.50,.95,0.999))
+```
+
+
+```{r correlogram}
+# calculate correlogram of residuals
+# increase the res argument to account for sampling variability
+OU.ACF <- correlogram(OU.RES,res=15)
+OUF.ACF <- correlogram(OUF.RES,res=15)
+
+# plot 4 day's worth of lags
+plot(OU.ACF[OU.ACF$lag<=5 %#% 'day',],fraction=1)
+title('OU lags')
+plot(OUF.ACF[OUF.ACF$lag<=5 %#% 'day',],fraction=1)
+title('OUF lags')
+
+zoom(OU.ACF[OU.ACF$lag<=5 %#% 'day',])
+zoom(OUF.ACF[OUF.ACF$lag<=5 %#% 'day',])
+```
+
+
